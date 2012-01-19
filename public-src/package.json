@@ -6,7 +6,7 @@
   "homepage": "http://milson.org",
   "repository": {
     "type": "git",
-    "url": "git://github.com/coolaj86/milson-org.git"
+    "url": "git://github.com/milson/milson-org.git"
   },
   "main": "lib/index",
   "engines": {
