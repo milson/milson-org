@@ -52,7 +52,7 @@
       fs.writeFile(fullpath.replace(/\.md$/, '.html'), text, 'utf8', checkWriteError);
     }
 
-    console.log(stat.name);
+    console.log('name: ', stat.name);
     if (!stat.name.match(/\.md$/)) {
       next();
       return;
