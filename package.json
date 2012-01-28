@@ -11,6 +11,10 @@
     "node": ">= 0.2"
   },
   "dependencies": {
+    "walk": "2.1.x",
+    "remedial": "1.0.7",
+    "highlight": "0.2.x",
+    "markdown": "0.3.x",
     "yaml": "0.2.x"
   },
   "devDependencies": {}
