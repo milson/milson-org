@@ -82,6 +82,7 @@
       newConfig = fileConfig || {};
       newConfig.filename = stat.name;
       newConfig.title = newConfig.title || stat.name.replace(/\.md$/, '');
+      newConfig.id = (newConfig.id || newConfig.title).replace(/[^a-zA-Z0-9_-]/g, '_');
 
       config.groups.some(function (group) {
         if (groupName !== group.name) {
@@ -105,6 +106,7 @@
         if (fileConfig) {
           fileConfig.filename = newConfig.filename;
           fileConfig.title = fileConfig.title || newConfig.title;
+          fileConfig.id = (fileConfig.id || newConfig.id).replace(/[^a-zA-Z0-9_-]/g, '_');
           docList[i] = fileConfig;
         }
 
