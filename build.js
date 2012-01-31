@@ -204,7 +204,8 @@
     }
 
     function getYamlConfig(text, cb) {
-      fs.readFile(fullpath.replace(/\.md$/, '.yml'), 'utf8', function (err, yml) {
+
+      function getYamlConfigHelper(err, yml) {
         var method = '.yml'
           , fileConfig
           ;
@@ -226,7 +227,9 @@
         }
 
         cb(err, text, fileConfig);
-      });
+      }
+
+      fs.readFile(fullpath.replace(/\.md$/, '.yml'), 'utf8', getYamlConfigHelper);
     }
 
     if (!stat.name.match(/\.md$/)) {
@@ -245,43 +248,40 @@
     walker.on('end', writeNewConfigFile);
   }
 
-  function readConfig() {
-    function applyConfig(err, text) {
-      if (err) {
-        //console.error(configPath + ' could not be read.');
-        //return;
-        text = '---\n  title: Please Change Title\n';
-      }
-
-      config = YAML.parse(text);
-      config.groups = config.groups || [];
-      config.templates = config.templates || {};
-      beginWalk();
-    }
-
-    fs.readFile(configPath, 'utf8', applyConfig);
-  }
-
-  Highlight.init(function (err) {
+  function beginWalkOnSuccess(err) {
     if (err) {
       console.error(err);
       return;
     }
 
-    readConfig();
-  }, ['xml', 'bash', 'javascript', 'java', 'cs', 'cpp']);
+    beginWalk();
+  }
 
-/*
-  * reads in `config.yml`
-  * walks the `src` directory structure
-  * for each file
-    * if file ends in `.md`
-      * if file exists in `config.yml`, load presets
-      * if file of same name, but ending in `yml` exsits
-        * read in yml
-        * replace presets, if any
-      * if no presets, use defaults (filename, replace special chars)
-      * if not exists in `config.yml`, append to end of list
-*/
+  function applyConfig(err, text) {
+    if (err) {
+      //console.error(configPath + ' could not be read.');
+      //return;
+      text = '---\n  title: Please Change Title\n';
+    }
+
+    try {
+      config = YAML.parse(text);
+    } catch(e) {
+      console.error(e.stack);
+      config = {};
+    }
+
+    config.groups = config.groups || [];
+    config.templates = config.templates || {};
+    config.languages = config.languages || ['xml', 'bash', 'javascript', 'java', 'cs', 'cpp'];
+
+    Highlight.init(beginWalkOnSuccess, config.languages);
+  }
+
+  function readConfig() {
+    fs.readFile(configPath, 'utf8', applyConfig);
+  }
+
+  readConfig();
 
 }());

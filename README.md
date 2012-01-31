@@ -13,5 +13,5 @@ Process Overview
       * if file of same name, but ending in `yml` exsits
         * read in yml
         * replace presets, if any
-      * if no presets, use defaults (filename, replace special chars)
+      - if no presets, use defaults (filename, replace special chars)
       * if not exists in `config.yml`, append to end of list
