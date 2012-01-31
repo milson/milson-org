@@ -1,3 +1,7 @@
+---
+title: yahoo
+---
+
 foo
 ===
 

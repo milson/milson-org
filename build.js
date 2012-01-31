@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  var yaml = require('yaml')
+  var YAML = require('json2yaml') // provides `stringify`
     , fs = require('fs')
     , walk = require('walk')
     , markdown = require('markdown').markdown
@@ -11,19 +11,19 @@
     , config = {}
     ;
 
+  YAML.parse = require('yaml').eval;
+
   function writeNewConfigFile() {
-    var text = ''
+    var ymlText
       ;
 
-    console.log('foooo:', config);
-    Object.keys(config).forEach(function (key) {
-      var val = config[key]
-        ;
+    ymlText = YAML.stringify(config) + '\n';
 
-      
+    fs.writeFile(configPath, ymlText, 'utf8', function (err) {
+      if (err) {
+        console.error(err.stack);
+      }
     });
-
-    console.log(config);
   }
 
   function convertMarkdown(root, stat, next) {
@@ -44,12 +44,88 @@
         console.error(err.stack);
         return;
       }
+      // TODO parse YAML front-matter, if any
       
-      // TODO where are the superflous `\n`s being introduced?
-      text = markdown.toHTML(text);
-      text = Highlight.highlight(text, '  ', true);
-      text = text.replace(/${SPOTTER}/g, 'remote.spotterrf.com:7772');
-      fs.writeFile(fullpath.replace(/\.md$/, '.html'), text, 'utf8', checkWriteError);
+      getYamlConfig(text, function (err, _text, frontMatter) {
+        console.log(frontMatter);
+        text = _text;
+        // TODO where are the superflous `\n`s being introduced?
+        text = markdown.toHTML(text);
+        text = Highlight.highlight(text, '  ', true);
+        // TODO
+        // for tpl in config.tpls
+        // text = text.replace(new RegExp(key, 'g'), val);
+        fs.writeFile(fullpath.replace(/\.md$/, '.html'), text, 'utf8', checkWriteError);
+      });
+    }
+
+    function readFrontMatter(text) {
+      var lines
+        , line
+        , output
+        , padIndent = ''
+        ;
+
+      lines = text.split(/\n/);
+      line = lines.shift();
+
+      if (!line.match(/^---\s*$/)) {
+        return;
+      }
+      output = '---\n';
+
+      // our yaml parser can't handle objects
+      // that start without indentation, so
+      // we can add it if this is the case
+      if (lines[0] && lines[0].match(/^\S/)) {
+        padIndent = '  ';
+      }
+
+      while (true) {
+        line = lines.shift();
+
+        // unsupported yaml
+        if (!line) {
+          output = undefined;
+          break;
+        }
+
+        // end of yaml front-matter
+        if (line.match(/^---\s*$/)) {
+          break;
+        }
+
+        // supported yaml
+        output += padIndent + line + '\n'; 
+      }
+
+      return output;
+    }
+
+    function getYamlConfig(text, cb) {
+      fs.readFile(fullpath.replace(/\.md$/, '.yml'), 'utf8', function (err, yml) {
+        var method = '.yml'
+          , fileConfig
+          ;
+
+        if (err) {
+          yml = readFrontMatter(text);
+          method = '.frontmatter'
+          // strip frontmatter from text, if any
+          text = text.split(/\n/).slice((yml||'').split(/\n/).length).join('\n');
+        }
+
+        if (yml) {
+          try {
+            fileConfig = YAML.parse(yml);
+          } catch(e) {
+            console.error("Couldn't pares yml for " + fullpath + method);
+            console.error(e.stack);
+          }
+        }
+
+        cb(err, text, fileConfig || {});
+      });
     }
 
     console.log('name: ', stat.name);
@@ -79,7 +155,7 @@
       }
 
       console.log('barish:', text);
-      config = yaml.eval(text);
+      config = YAML.parse(text);
       console.log('stuperfoo:', config);
       beginWalk();
     }
