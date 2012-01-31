@@ -1,0 +1,44 @@
+---
+  title: "Please Change Title"
+  groups: 
+    - 
+      pathname: "installation"
+      documents: 
+        - 
+          title: "NodeJS"
+          id: "nodejs"
+          filename: "nodejs.md"
+        - 
+          title: "Example Project"
+          id: "example-project"
+          filename: "example-project.md"
+      title: "Installation"
+      id: "installation"
+    - 
+      pathname: "usage"
+      documents: 
+        - 
+          title: "Branding"
+          id: "branding"
+          filename: "branding.md"
+        - 
+          title: "Publishing"
+          id: "publishing"
+          filename: "publishing.md"
+      title: "Usage"
+      id: "usage"
+  templates: 
+    languages: 
+      - "xml"
+      - "bash"
+      - "javascript"
+      - "java"
+      - "cs"
+      - "cpp"
+  languages: 
+    - "xml"
+    - "bash"
+    - "javascript"
+    - "java"
+    - "cs"
+    - "cpp"
