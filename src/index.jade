@@ -1,0 +1,44 @@
+!!! 5
+//- A note when adding things to this file-
+//- 1. Be sure you add the .in_menu to the div around the import.
+//- 2. Be sure you add the appropriate menu items under the li.menu_major. Just follow the pattern.
+
+head
+  title ACME Documentation
+  script(src="./pakmanaged.js")
+  link(rel="stylesheet", type="text/css", href="style.css")
+
+body
+  #header
+    .top_wrap
+      img#logo(src="images/logo.png", alt="ACME")
+      .page_head
+        | ACME API Documentation
+
+  #container
+    // Yes, we know that tables are a no-no for style.
+    // We have the technology
+    // We can (and will) rebuild him
+    table.doc_columns
+      tbody
+        tr
+          td.menu_column
+            .menu
+              ul
+                include links
+
+          td.content_column
+            include documents
+
+  #footer
+    .top_wrap
+      #flogo
+        img(src="images/logo.png", alt="ACME")
+        #copyright © YYYY ACME
+      ul#footie_pajamas
+        li
+          //- don't you dare use a www. prefix
+          //- by default. I will gut you.
+          a(href="http://acme.com/") ACME Home
+        li
+          | Email: dev-support@acme.com

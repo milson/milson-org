@@ -11,9 +11,73 @@
     , srcPath = __dirname + '/src'
     , path = require('path')
     , config = {}
+    // technically you can backslash and exscape and be stupid
+    // but for simplicity:
+    // must begin with a-zA-Z
+    // may have 0-9_- after the first char
+    , cssUnsafeChars = /[^a-zA-Z0-9_-]/g
+    , linksJadePath = __dirname + '/src/links.jade'
+    , documentsJadePath = __dirname + '/src/documents.jade'
     ;
 
   YAML.parse = require('yaml').eval;
+
+  function buildJade() {
+    var linksJade = []
+      , documentsJade = []
+      ;
+
+    config.groups.forEach(function (group) {
+      if (group.private) {
+        return;
+      }
+
+      group.title = group.title || group.pathname;
+      group.id = group.id || group.pathname.replace(cssUnsafeChars, '_');
+
+      //  li#api_basics_mwrap.menu_major
+      //    a(href="#api_basics").top_style API Basics
+      //      ul
+      linksJade.push("li#" + group.id + "_mwrap.menu_major");
+      linksJade.push("  a(href=#" + group.id + ").top_style " + (group.linkTitle || group.title));
+      linksJade.push("    ul");
+
+      group.documents.forEach(function (document) {
+        if (document.private) {
+          return;
+        }
+      //        li.menu_sub
+      //          a(href="#polling") Polling
+        linksJade.push("      li.menu_sub");
+        linksJade.push("        a(href='#" + document.id + "') " + (document.linkTitle || document.title));
+      });
+    });
+    fs.writeFile(linksJadePath, linksJade.join('\n') + '\n', 'utf8', function (err) {});
+
+    config.groups.forEach(function (group) {
+        if (group.private) {
+        return;
+        }
+
+        //  .cwrapper(data-map="api_basics")
+        //    h1#api_basics API Basics
+        documentsJade.push(".cwrapper(data-map='" + group.id + "')");
+        documentsJade.push("  h1#" + group.id + " " + (group.headerTitle || group.title));
+
+        group.documents.forEach(function (document) {
+          if (document.private) {
+          return;
+          }
+          //      #polling.in_menu
+          //        h2 Polling
+          //        include basics/polling.html
+          documentsJade.push("  #" + document.id + ".in_menu");
+          documentsJade.push("    h2 " + (document.headerTitle || document.title));
+          documentsJade.push("    include " + group.pathname + "/" + document.filename.replace(/\.md$/, '.html'));
+      });
+    });
+    fs.writeFile(documentsJadePath, documentsJade.join('\n') + '\n', 'utf8', function (err) {});
+  }
 
   function writeNewConfigFile(cb) {
     var ymlText
@@ -29,7 +93,7 @@
       }
 
       forEachAsync(group.documents, function (next2, file, j) {
-        path.exists(srcPath + '/' + group.name + '/' + file.filename, function (exists) {
+        path.exists(srcPath + '/' + group.pathname + '/' + file.filename, function (exists) {
           if (!exists) {
             group.documents[j] = null;
           }
@@ -48,6 +112,8 @@
       config.groups = config.groups.filter(function (x) {
         return !!x;
       });
+
+      buildJade();
 
       ymlText = YAML.stringify(config) + '\n';
 
@@ -82,10 +148,10 @@
       newConfig = fileConfig || {};
       newConfig.filename = stat.name;
       newConfig.title = newConfig.title || stat.name.replace(/\.md$/, '');
-      newConfig.id = (newConfig.id || newConfig.title).replace(/[^a-zA-Z0-9_-]/g, '_');
+      newConfig.id = (newConfig.id || newConfig.title).replace(cssUnsafeChars, '_');
 
       config.groups.some(function (group) {
-        if (groupName !== group.name) {
+        if (groupName !== group.pathname) {
           return;
         }
 
@@ -106,7 +172,7 @@
         if (fileConfig) {
           fileConfig.filename = newConfig.filename;
           fileConfig.title = fileConfig.title || newConfig.title;
-          fileConfig.id = (fileConfig.id || newConfig.id).replace(/[^a-zA-Z0-9_-]/g, '_');
+          fileConfig.id = (fileConfig.id || newConfig.id).replace(cssUnsafeChars, '_');
           docList[i] = fileConfig;
         }
 
@@ -121,7 +187,7 @@
 
       if (!foundGroup) {
         config.groups.push({
-            name: groupName
+            pathname: groupName
           , documents: docList
         });
       }

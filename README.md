@@ -13,7 +13,8 @@ However, customizations to `title` and `filename` must be done to the accompanyi
 Process Overview
 ===
 
-Implemented
+Implemented *
+Not Implemented -
 
   * reads in `config.yml`
   * walks the `src` directory structure
@@ -25,3 +26,5 @@ Implemented
         * replace presets, if any
       * if no presets, use defaults (filename, replace special chars)
       * if not exists in `config.yml`, append to end of list
+  - compile jade files
+  - remove remnant html
