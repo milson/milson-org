@@ -39,7 +39,7 @@
       //    a(href="#api_basics").top_style API Basics
       //      ul
       linksJade.push("li#" + group.id + "_mwrap.menu_major");
-      linksJade.push("  a(href=#" + group.id + ").top_style " + (group.linkTitle || group.title));
+      linksJade.push("  a(href='#" + group.id + "').top_style " + (group.linkTitle || group.title));
       linksJade.push("    ul");
 
       group.documents.forEach(function (document) {

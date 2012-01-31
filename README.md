@@ -6,8 +6,8 @@ Installation
   0. Install NodeJS (<http://nodejs.org>)
 
   0. Install and build the example project
-      npm install
-      node build.js
+
+        bash build.sh
 
 How it Works
 ===
