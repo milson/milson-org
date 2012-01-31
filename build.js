@@ -308,11 +308,31 @@
     fs.readFile(fullpath, 'utf8', markItDown);
   }
 
+  // tricky original array manipulation
+  function excludeNodeModules(root, dirs, next) {
+    var _dirs
+      , dir
+      ;
+
+    _dirs = dirs.filter(function (dirname) {
+      return !dirname.name.match(/node_modules/);
+    });
+
+    // empty the original array
+    dirs.splice(0);
+    while (dir = _dirs.pop()) {
+      dirs.push(dir);
+    }
+
+    next();
+  }
+
   function beginWalk() {
     var walker = walk.walk(srcPath)
       ;
 
     walker.on('file', convertMarkdown);
+    walker.on('directories', excludeNodeModules);
     walker.on('end', writeNewConfigFile);
   }
 

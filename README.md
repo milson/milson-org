@@ -3,11 +3,15 @@ This is the documentation generator which compiles the <http://milson.org> docum
 Installation
 ===
 
-  0. Install NodeJS (<http://nodejs.org>)
+  0. Install NodeJS (<http://nodejs.org#download>)
 
-  0. Install and build the example project
+  0. Build the example project
 
-        bash build.sh
+        ./build.sh
+        cd public
+        served 7755
+
+  0. View the built project at <http://localhost:7755>
 
 How it Works
 ===
