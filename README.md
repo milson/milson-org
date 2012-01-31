@@ -1,5 +1,29 @@
 This is the documentation generator which compiles the <http://milson.org> documentation pages.
 
+Installation
+===
+
+  0. Install NodeJS (<http://nodejs.org>)
+
+  0. Install and build the example project
+      npm install
+      node build.js
+
+How it Works
+===
+
+  0. You put your header, footer, logo, etc in `src/index.jade` 
+  0. You put articles in `src/some-group-name/`, `src/some-other-group-name`, etc
+  0. When you run `node build.js`
+    * The `*.md` files in `src/some-group-name` are turned into annotated `.html`
+      * you can change which languages should be annotated in `config.yml.languages`
+    * `config.yml` is auto-updated every time you `node build.js`
+      * If `src/my-group/my-doc.md` has YAML front matter, or `src/my-group/my-doc.yml` exsits, the defaults are overridden with that data
+    * you can change the order in which groups and documents appear by changing their order in `config.yml`
+      * even though it auto-updates, the order you specify will be preserved
+    * `src/links.jade` and `src/documents.jade` will be produced from the directory scan
+    * `src/index.jade` will be built to contain ALL of the documents
+
 Scans Directories
 ===
 
