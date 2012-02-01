@@ -239,6 +239,7 @@
       line = lines.shift();
 
       if (!line.match(/^---\s*$/)) {
+        lines.unshift(line);
         return;
       }
       output = '---\n';
