@@ -3,6 +3,7 @@
 #BLD_DIR=${2}
 SRC_DIR=src/
 BLD_DIR=public/
+EXTENDED=custom.sh
 #BLD_DIR=public/docs/latest
 
 if [ ! -e "node_modules" ]
@@ -53,5 +54,11 @@ cd "${SRC_DIR}/"
   rm "pakmanaged.html"
   mv pakmanaged.* "../${BLD_DIR}/"
 cd - > /dev/null
+
+if [ -x ${EXTENDED} ]
+then
+  echo "Handing off execution to extension..."
+  ./${EXTENDED}
+fi
 
 echo "Done"
