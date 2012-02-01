@@ -239,7 +239,6 @@
       line = lines.shift();
 
       if (!line.match(/^---\s*$/)) {
-        lines.unshift(line);
         return;
       }
       output = '---\n';
@@ -277,13 +276,21 @@
       function getYamlConfigHelper(err, yml) {
         var method = '.yml'
           , fileConfig
+          , len
           ;
 
+        // no config file, try for frontmatter
         if (err) {
           yml = readFrontMatter(text);
           method = '.frontmatter'
           // strip frontmatter from text, if any
-          text = text.split(/\n/).slice((yml||'').split(/\n/).length).join('\n');
+          // including trailing '---' (which is accounted for by the added '\n')
+          if (yml) {
+            len = yml.split(/\n/).length;
+          } else {
+            len = 0;
+          }
+          text = text.split(/\n/).slice(len).join('\n');
         }
 
         if (yml) {
