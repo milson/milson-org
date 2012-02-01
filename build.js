@@ -332,6 +332,7 @@
       ;
 
     walker.on('file', convertMarkdown);
+    walker.on('symbolicLink', convertMarkdown);
     walker.on('directories', excludeNodeModules);
     walker.on('end', writeNewConfigFile);
   }
