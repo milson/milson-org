@@ -1,20 +1,16 @@
 (function() {
   "use strict";
   var $ = require('ender')
-    , forEachAsync = require('forEachAsync')
+    , forEachAsync = require('futures').forEachAsync
     , marginOffset = 59
     , scrollWait = 50
     , lastScroll
-    , in_menus
+    , contentBlocks
     , allMenuItems
+    , allMenus
     ; 
 
   function menuStick() {
-    if(scrollWait > Date.now() - lastScroll) {
-      return;
-    }
-    lastScroll = Date.now();
-
     var scrollIndex = $('body').scrollTop();
     if(scrollIndex > 98) {
       $('.menu').addClass('sticky');
@@ -22,77 +18,82 @@
       $('.menu').removeClass('sticky');
     }
 
-    in_menus.some(function(element, index) {
-      var menuItem = $('[href="#' + element.id + '"]')
-        , realItem = $('#' + element.id)
+    if(scrollWait > Date.now() - lastScroll) {
+      return;
+    }
+    lastScroll = Date.now();
+    contentBlocks.some(function(element, index) {
+      var menuBlock = $('#' + element.dataset.map + '_mwrap ul')
+        , content = $('[data-map="' + element.dataset.map +'"]')
+        , cTop = content.offset().top - marginOffset
+        , cBottom = cTop + content.offset().height + marginOffset// It's faster to do an addition operation here.
+        , menuItems
         ;
 
-      // if not in view or is already selected
-      if(scrollIndex > realItem.offset().top + realItem.offset().height + marginOffset
-      || scrollIndex < realItem.offset().top || menuItem.hasClass('active')) {
-
+      // Are we in view?
+      if(scrollIndex < cTop || scrollIndex > cBottom) {
+        // no, kill execution and move on:
         return false;
+      }
+      // If we aren't active, expand:
+      if(!menuBlock.hasClass('menuOpen')) {
+        // If we make it here, it means the content IS in view, and the menu is NOT expanded.
+        // Close the others:
+        allMenus.removeClass('menuOpen');
+        allMenus.hide();
+        // Show the current:
+        menuBlock.addClass('menuOpen');
+        menuBlock.show();
+      }
 
-      } 
-
-      allMenuItems.removeClass('active');
-      showSub(menuItem);
-      menuItem.addClass('active');
-
-
-      return true;
+      // Take care of highlighting:
+      content.children('.in_menu').each(highlight);
     });
+
+    function highlight(contentNibble, idx) {
+      var nibble = $('#' + contentNibble.id)
+        , nibbleTop = nibble.offset().top - marginOffset
+        , nibbleBottom = nibbleTop + nibble.offset().height + marginOffset
+        ;
+
+      if((scrollIndex > nibbleTop && scrollIndex < nibbleBottom)
+      && !nibble.hasClass('active')) {
+        // If we've made it here, then the menuItem IS in view, and is NOT highlighted.
+        allMenuItems.removeClass('active');
+        $('[href="#' + contentNibble.id + '"]').addClass('active');
+      }
+    }
   }
 
-// TODO change theAwesomeness to a .dataset attribute.
-  function showSub(anchorEl) {
-    // if it is a menu major and it already has the class then it is already expanded
-    // do nothing.
-    if(anchorEl.closest('li').hasClass('menu_major')) {
-      if(!anchorEl.hasClass('active')) {
-        console.log('hiding 52');
-        $('.menu_major ul').hide();
-        anchorEl.siblings('ul').show();
-        anchorEl.closest('li').addClass('theAwesomeness');
-      }
-      // do nothing
-      return;
-    //  showSub(element);
-    }
-
-    if(!anchorEl.closest('.menu_major').hasClass('theAwesomeness')) {
-      console.log('our master doesnt have the awesomeness.');
-
-      $('.menu_major').removeClass('theAwesomeness');
-      anchorEl.closest('.menu_major').addClass('theAwesomeness');
-
-      console.log('Hiding #68');
-      $('.menu_major ul').hide();
-      anchorEl.closest('ul').show();
-    }
-    
 
 
-    //  showSub(menuItem.closest('.menu_major'));
-    // if we are changing the active class on the parent major menu then hide all and show one.
-
-    //$(element).children('ul').show();
+  function chromeRedrawFix() {
+    setTimeout(function() {
+      var sel = $('.menu')[0];
+      sel.style.display = 'none';
+      sel.offsetHeight;
+      sel.style.display = 'block';
+    }, 1);
   }
 
   function assignHandlers() {
     window.onscroll = menuStick;
-    in_menus = [];
+    contentBlocks = [];
 
-    $('.in_menu').forEach(function (el, i) {
-      in_menus[i] = el;
+    $('.cwrapper').forEach(function(el, i) {
+      contentBlocks[i] = el;
     });
 
-    $('.menu_major ul').hide();
     lastScroll = Date.now();
 
+    allMenus = $('.menu_major ul');
     allMenuItems = $('.menu li a');
+    allMenus.hide();
+
+    $('.doc_columns').delegate('.menu_column', 'click', chromeRedrawFix);
   }
 
   $.domReady(assignHandlers);
+
 
 }());
