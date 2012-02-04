@@ -1,6 +1,3 @@
-(function () {
-  "use strict";
-
-  module.exports = {
-  };
-}());
+module.exports = {
+  port: 3000
+};

@@ -1,4 +1,13 @@
-*.html
-*.css
-public
+.DS_STORE
 node_modules
+*.html
+*.swp
+*.swo
+public/*.css
+public/*.js
+*.swp
+*.swo
+*.html
+documents.jade
+links.jade
+public/

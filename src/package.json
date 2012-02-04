@@ -1,0 +1,22 @@
+{
+  "author": "Eric Jacobs <eric@chomp.us> (http://techosaur.us/)",
+  "name": "documentation-browser",
+  "description": "Browser dependencies for the SpotterRF documentaiton site.",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/SpotterRF/documentation.git"
+  },
+  "engines": {
+    "node": "~0.6.7"
+  },
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {},
+  "browserDependencies": {
+    "bean": "0.4.x",
+    "bonzo": "0.9.x",
+    "domready": "0.2.x",
+    "futures": "2.x"
+  }
+}

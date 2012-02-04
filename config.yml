@@ -1,0 +1,61 @@
+---
+  title: "MILSON"
+  groups: 
+    - 
+      pathname: "mailing_list"
+      documents: 
+        - 
+          filename: "list.md"
+          title: "Google Groups"
+          id: "list"
+      title: "Mailing List"
+      id: "mailing_list"
+    - 
+      pathname: "activities"
+      documents: 
+        - 
+          filename: "current.md"
+          title: "Current"
+          id: "current"
+        - 
+          filename: "past.md"
+          title: "Past"
+          id: "past"
+      title: "Activities"
+      id: "activities"
+    - 
+      pathname: "observations"
+      private: true
+      documents: 
+        - 
+          filename: "observations.md"
+          title: "observations"
+          id: "observations"
+      title: "Observations"
+      id: "observations"
+    - 
+      pathname: "transmission"
+      private: true
+      documents: 
+        - 
+          filename: "transmission.md"
+          title: "transmission"
+          id: "transmission"
+      title: "Transmission"
+      id: "transmission"
+  templates: 
+    languages: 
+      - "xml"
+      - "bash"
+      - "javascript"
+      - "java"
+      - "cs"
+      - "cpp"
+  languages: 
+    - "xml"
+    - "bash"
+    - "javascript"
+    - "java"
+    - "cs"
+    - "cpp"
+

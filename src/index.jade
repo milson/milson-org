@@ -1,0 +1,53 @@
+!!! 5
+//- A note when adding things to this file-
+//- 1. Be sure you add the .in_menu to the div around the import.
+//- 2. Be sure you add the appropriate menu items under the li.menu_major. Just follow the pattern.
+
+head
+  title MILSON - Military Standards Object Notation
+  script(src="./pakmanaged.js")
+  link(rel="stylesheet", type="text/css", href="style.css")
+
+body
+  #header
+    .top_wrap
+      img#logo(src="images/logo.png", alt="Military Standards Object Notation")
+
+  #container
+    table.doc_columns
+      tbody
+        tr
+          td.menu_column
+            .menu
+              ul
+                include links
+
+
+          td.content_column
+            //- include mailing
+                include documents
+            .cwrapper(data-map='mailing_list')
+              h1#mailing_list Mailing List
+              #list.in_menu
+                h2 Google Groups
+                //- include mailing_list/list.html
+                include mailing
+            .cwrapper(data-map='activities')
+              h1#activities Activities
+              #current.in_menu
+                h2 Current
+                include activities/current.html
+              #past.in_menu
+                h2 Past
+                include activities/past.html
+
+  #footer
+    .top_wrap
+      #flogo
+        img(src="images/logo.png", alt="Military Standards Object Notation")
+        #copyright © 2012
+      ul#footie_pajamas
+        li
+          a(href="http://milson.org/") Home
+        li
+          | Email: ajoneal@spotterrf.com

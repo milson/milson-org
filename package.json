@@ -1,0 +1,24 @@
+{
+  "author": "Eric Jacobs <eric@chomp.us> (http://techosaur.us/)",
+  "name": "milson",
+  "description": "Military Standard Object Notation",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/milson/milson-org.git"
+  },
+  "engines": {
+    "node": "~0.6.7"
+  },
+  "dependencies": {
+    "walk": "2.1.x",
+    "remedial": "1.0.7",
+    "highlight": "0.2.x",
+    "markdown": "0.3.x",
+    "yaml": "0.2.x",
+    "json2yaml": "1.x",
+    "forEachAsync": "2.x",
+    "connect": "~1.8.5"
+  },
+  "devDependencies": {}
+}
