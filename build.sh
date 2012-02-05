@@ -6,6 +6,8 @@ BLD_DIR=public/
 EXTENDED=custom.sh
 #BLD_DIR=public/docs/latest
 
+set -e
+
 if [ ! -e "node_modules" ]
 then
   echo "Installing modules..."
@@ -26,6 +28,7 @@ then
 fi
 
 echo "Converting markdown to annotated html..."
+rm -rf ${SRC_DIR}/links.jade ${SRC_DIR}/documents.jade
 node build.js ${SRC_DIR}
 jade "${SRC_DIR}/index.jade" > /dev/null
 

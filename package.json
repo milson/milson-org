@@ -15,6 +15,7 @@
     "remedial": "1.0.7",
     "highlight": "0.2.x",
     "markdown": "0.3.x",
+    "jade": "0.20.x",
     "yaml": "0.2.x",
     "json2yaml": "1.x",
     "forEachAsync": "2.x"

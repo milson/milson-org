@@ -6,6 +6,7 @@
     , walk = require('walk')
     , markdown = require('markdown').markdown
     , Highlight = require('highlight')
+    , jade = require('jade')
     , forEachAsync = require('forEachAsync')
     , configPath = __dirname + '/config.yml'
     , srcPath = __dirname + '/src'
@@ -73,7 +74,7 @@
           //        include basics/polling.html
           documentsJade.push("  #" + document.id + ".in_menu");
           documentsJade.push("    h2 " + (document.headerTitle || document.title));
-          documentsJade.push("    include " + group.pathname + "/" + document.filename.replace(/\.md$/, '.html'));
+          documentsJade.push("    include " + group.pathname + "/" + document.filename.replace(/\.\w+$/, '.html'));
       });
     });
     fs.writeFile(documentsJadePath, documentsJade.join('\n') + '\n', 'utf8', function (err) {});
@@ -132,7 +133,7 @@
       , groupName
       , newDoc = {
             filename: stat.name
-          , title: stat.name.replace(/\.md$/, '')
+          , title: stat.name.replace(/\.\w+$/, '')
         }
       ;
 
@@ -147,7 +148,7 @@
 
       newConfig = fileConfig || {};
       newConfig.filename = stat.name;
-      newConfig.title = newConfig.title || stat.name.replace(/\.md$/, '');
+      newConfig.title = newConfig.title || stat.name.replace(/\.\w+$/, '');
       newConfig.id = (newConfig.id || newConfig.title).replace(cssUnsafeChars, '_');
 
       config.groups.some(function (group) {
@@ -202,21 +203,37 @@
       next();
     }
 
+    function highlightHtml(text) {
+      text = Highlight.highlight(text, '  ', true);
+      fs.writeFile(fullpath.replace(/\.\w+$/, '.html'), text, 'utf8', checkWriteError);
+    }
+
+    // TODO - use the map!
+    // renders[ext]()
+    function renderText(text) {
+      if (fullpath.match(/\.md$/)) {
+        text = markdown.toHTML(text);
+      } else if (fullpath.match(/\.jade$/)) {
+        // jade compiles a template function
+        text = jade.compile(text)();
+      }
+
+      return text;
+    }
+
     function markItDown(err, text) {
       if (err) {
         console.error(err.stack);
         return;
       }
-      // TODO parse YAML front-matter, if any
-      
+
+      // TODO get YAML for groups (folders)
       getYamlConfig(text, function (err, _text, frontMatter) {
         addToConfig(frontMatter);
 
         text = _text;
         // TODO where are the superflous `\n`s being introduced?
-        text = markdown.toHTML(text);
-        text = Highlight.highlight(text, '  ', true);
-        // TODO
+        text = renderText(text);
         Object.keys(config.templates).forEach(function (key) {
           var val = config.templates[key]
             ;
@@ -224,7 +241,7 @@
           text = text.replace(new RegExp('{{' + key + '}}', 'g'), val);
         });
 
-        fs.writeFile(fullpath.replace(/\.md$/, '.html'), text, 'utf8', checkWriteError);
+        highlightHtml(text);
       });
     }
 
@@ -305,15 +322,16 @@
         cb(err, text, fileConfig);
       }
 
-      fs.readFile(fullpath.replace(/\.md$/, '.yml'), 'utf8', getYamlConfigHelper);
+      fs.readFile(fullpath.replace(/\.\w+$/, '.yml'), 'utf8', getYamlConfigHelper);
     }
 
-    if (!stat.name.match(/\.md$/)) {
-      next();
+    if (fullpath.match(/\.(md|jade)$/) && !fullpath.match(/index.jade$/)) {
+      fs.readFile(fullpath, 'utf8', markItDown);
       return;
     }
 
-    fs.readFile(fullpath, 'utf8', markItDown);
+    // fallthrough
+    next();
   }
 
   // tricky original array manipulation
