@@ -1,12 +1,7 @@
-.DS_STORE
+.DS_*
 node_modules
-*.html
-*.swp
-*.swo
-public/*.css
-public/*.js
-*.swp
-*.swo
+config.yml
+.*.sw*
 *.html
 documents.jade
 links.jade

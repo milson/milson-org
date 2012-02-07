@@ -1,22 +1,23 @@
 {
   "author": "Eric Jacobs <eric@chomp.us> (http://techosaur.us/)",
-  "name": "documentation-browser",
-  "description": "Browser dependencies for the SpotterRF documentaiton site.",
-  "version": "0.0.1",
+  "name": "documentation-client",
+  "description": "Browser dependencies for the MILSON documentaiton site.",
+  "version": "0.1.0",
   "repository": {
     "type": "git",
-    "url": "git://github.com/SpotterRF/documentation.git"
+    "url": "git://github.com/milson/milson-org.git"
   },
   "engines": {
-    "node": "~0.6.7"
+    "node": ">= 0.2"
   },
-  "main": "index.js",
+  "lib": "lib",
+  "main": "lib/index.js",
   "dependencies": {},
   "devDependencies": {},
   "browserDependencies": {
     "bean": "0.4.x",
     "bonzo": "0.9.x",
     "domready": "0.2.x",
-    "futures": "2.x"
+    "forEachAsync": "2.x"
   }
 }
