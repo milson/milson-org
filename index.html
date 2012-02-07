@@ -1,3 +1,104 @@
-<!DOCTYPE html><head><title>MILSON - Military Standards Object Notation</title><script src="./pakmanaged.js"></script><link rel="stylesheet" type="text/css" href="style.css"><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta http-equiv="X-UA-Compatible" content="chrome=1"></head><body><div id="header"><div class="top_wrap"><img id="logo" src="images/logo.png" alt="Military Standards Object Notation"></div></div><div id="container"><table class="doc_columns"><tbody><tr><td class="menu_column"><div class="menu"><ul><li id="mailing_list_mwrap" class="menu_major"><a href="#mailing_list" class="top_style">Mailing List<ul><li class="menu_sub"><a href="#list">Google Groups</a></li></ul></a></li><li id="activities_mwrap" class="menu_major"><a href="#activities" class="top_style">Activities<ul><li class="menu_sub"><a href="#current">Current</a></li><li class="menu_sub"><a href="#past">Past</a></li></ul></a></li></ul></div></td><td class="content_column"><div data-map="mailing_list" class="cwrapper"><h1 id="mailing_list">Mailing List</h1><div id="list" class="in_menu"><h2>Google Groups</h2><html><body><table border="0" style="background-color: #fff; padding: 5px;" cellspacing="0"><tr><td><img src="http://groups.google.com/intl/en/images/logos/groups_logo_sm.gif" height="30" width="140" alt="Google Groups"></td></tr><tr><td style="padding-left: 5px;"><b>Subscribe to Military Standard Object Notation</b></td></tr><form action="http://groups.google.com/group/milson-org/boxsubscribe"><input type="hidden" name="hl" value="en"><tr><td style="padding-left: 5px;">Email:
-<input type="text" name="email"><input type="submit" name="sub" value="Subscribe"></td></tr></form><tr><td align="right"><a href="http://groups.google.com/group/milson-org?hl=en">Visit this group</a></td></tr></table></body></html></div></div><div data-map="activities" class="cwrapper"><h1 id="activities">Activities</h1><div id="current" class="in_menu"><h2>Current</h2><h3>There are no currently planned activities.</h3></div><div id="past" class="in_menu"><h2>Past</h2><h3>There have not been any activities.</h3></div></div></td></tr></tbody></table></div><div id="footer"><div class="top_wrap"><div id="flogo"><img src="images/logo.png" alt="Military Standards Object Notation"><div id="copyright">© 2012</div></div><ul id="footie_pajamas"><li><a href="http://milson.org/">Home</a></li><li>Email: ajoneal@spotterrf.com
+<!DOCTYPE html><head><title>MILSON - Military Standards Object Notation</title><script src="./pakmanaged.js"></script><link rel="stylesheet" type="text/css" href="style.css"><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta http-equiv="X-UA-Compatible" content="chrome=1"></head><body><div id="header"><div class="top_wrap"><img id="logo" src="images/logo.png" alt="Military Standards Object Notation"></div></div><div id="container"><table class="doc_columns"><tbody><tr><td class="menu_column"><div class="menu"><ul><li id="about_mwrap" class="menu_major"><a href="#about" class="top_style">About<ul><li class="menu_sub"><a href="#purpose">Purpose</a></li><li class="menu_sub"><a href="#google-group">Google Group</a></li></ul></a></li><li id="data-types_mwrap" class="menu_major"><a href="#data-types" class="top_style">Data Types<ul><li class="menu_sub"><a href="#geolocation">geolocation</a></li><li class="menu_sub"><a href="#orientation">orientation</a></li><li class="menu_sub"><a href="#observation">observation</a></li></ul></a></li></ul></div></td><td class="content_column"><div data-map="about" class="cwrapper"><h1 id="about">About</h1><div id="purpose" class="in_menu"><h2>Purpose</h2><p>MILSON is a specification managed by the MILSON Working Group, which defines how data concerning spacial objects should be communicated beteween integrated systems.</p></div><div id="google-group" class="in_menu"><h2>Google Group</h2><html><body><table border="0" style="background-color: #fff; padding: 5px;" cellspacing="0"><tr><td><img src="http://groups.google.com/intl/en/images/logos/groups_logo_sm.gif" height="30" width="140" alt="Google Groups"/></td></tr><tr><td style="padding-left: 5px;"><b>Subscribe to Military Standard Object Notation</b></td></tr><form action="http://groups.google.com/group/milson-org/boxsubscribe"><input type="hidden" name="hl" value="en"/><tr><td style="padding-left: 5px;">Email:
+<input type="text" name="email"/><input type="submit" name="sub" value="Subscribe"/></td></tr></form><tr><td align="right"><a href="http://groups.google.com/group/milson-org?hl=en">Visit this group</a></td></tr></table></body></html></div></div><div data-map="data-types" class="cwrapper"><h1 id="data-types">Data Types</h1><div id="geolocation" class="in_menu"><h2>geolocation</h2><p><code>geolocation</code> describes the position and location of a sensor or detected object according to <a href="http://en.wikipedia.org/wiki/World_Geodetic_System#A_new_World_Geodetic_System:_WGS_84">WGS84/EGM96</a> (aka GPS) coordinates 
+and the <a href="http://dev.w3.org/geo/api/spec-source.html#coordinates_interface">W3C Coordinates Interface</a>.</p>
+
+<p>Obviously not all sensors are capable of 3-dimenional detections, so irrelavent fields may be omitted or filled with <code>0</code> values.</p>
+
+<h3>JSON Representation</h3>
+
+<pre><code>{
+    &quot;altitude&quot;: <span class="number">14999.0009</span>
+  , &quot;altitudeAccuracy&quot;: <span class="number">0</span>
+  , &quot;declination&quot;: <span class="number">11.9</span>
+  , &quot;latitude&quot;: <span class="number">89.0009</span>
+  , &quot;longitude&quot;: <span class="number">179.0009</span>
+  , &quot;heading&quot;: <span class="number">12</span>
+  , &quot;speed&quot;: <span class="number">13</span>
+  , &quot;accuracy&quot;: <span class="number">0</span>
+[<span class="keyword">object</span> Object]</code></pre>
+
+<h3>Fields</h3>
+
+<p>Any unsupported values may be omitted or replaced with <code>0</code>.</p>
+
+<ul><li><code>altitude</code> describes the height above sea level (more or less) in meters (aka HAE in WGS-84)</li><li><code>declination</code> is the variance between magnetic north and true north at this location</li><li><code>latitude</code> is in decimal format (<code>-90</code> to <code>90</code>)</li><li><code>longitude</code> is in decimal format (<code>-180</code> to <code>180</code>)</li><li><code>heading</code> refers to the 2-dimensional direction (<code>horizontalAngle</code>) the object is moving, not the direction that it faces (aka <code>compassHeading</code>)</li><li><code>speed</code> refers to the 2-dimensional surface speed of the described object, (along the <code>horizantalAngle</code>)</li></ul>
+
+<h3>Custom Extensions</h3>
+
+<p>Any non-standard extension to the observation should be prefixed with <code>x_</code> and followed by a <code>camelCase</code> name.</p>
+
+<p>Please bring the discussed to the mailing list, as the focus of MILSON is to create meaningful general purpose standards.</p>
+
+<h3>Glossary</h3>
+
+<ul><li>&quot;HAE&quot; expands to &quot;height above ellipsoid&quot; and refers to &quot;altitude&quot;</li><li>&quot;WGS&quot; expands to &quot;World Geodetic System&quot; and refers to common &quot;GPS Coordinates&quot; of lat, lon, hae.</li></ul></div><div id="orientation" class="in_menu"><h2>orientation</h2><p>The <code>orientation</code> of a sensor describes its angle about the x, y, and z axis in absolute, magnetic, and relative fashion.</p>
+
+<h3>Data</h3>
+
+<pre><code>{
+    &quot;alpha&quot;: <span class="number">218</span>,
+    &quot;beta&quot;: -<span class="number">92</span>,
+    &quot;gamma&quot;: <span class="number">0</span>,
+    &quot;compassHeading&quot;: <span class="number">142</span>,
+    &quot;compassAccuracy&quot;: <span class="number">1</span>,
+    &quot;bearing&quot;: <span class="number">134</span>,
+    &quot;declination&quot;: -<span class="number">8</span>,
+    &quot;absolute&quot;: <span class="keyword">true</span>,
+[<span class="keyword">object</span> Object]</code></pre>
+
+<h3>Fields</h3>
+
+<ul><li><code>alpha</code> - rotation about the Z axis<ul><li>positive when rotated counterclockwise, facing the front of the sensor</li><li>from 0 to 359.9 degrees</li></ul></li><li><code>beta</code> - rotation about the X axis<ul><li>positive when tipping the top of the sensor towards the observer</li><li>from -180 to 179.9 degrees</li></ul></li><li><code>gamma</code> - rotation about the Y axis<ul><li>positive when rotated counterclockwise looking down at the top of the sensor</li><li>from -90 to 89.9 degrees</li></ul></li><li><code>compassHeading</code> - what bearing the front of the sensor is facing relative to <strong>true</strong> north, -360 to 360 degrees</li><li><code>absolute</code> - <code><span class="literal">true</span></code> if the sensor has a compass module as well</li><li><code>compassNeedsCalibration</code></li></ul>
+
+<h3>Notes</h3>
+
+<ul><li>If no compass module is present, then <code>useDeclination</code>, <code>getNewOrientation</code> and <code>acquireOrientationOnBoot</code> will have no effect. <code>compassHeading</code> will keep its user-defined value.</li><li>Measurements are updated once a second.</li><li>Rotations are applied according to the W3C Device Orientation specification using the front of the sensor as the &quot;screen.&quot; </li><li>All properties are set to <code><span class="literal">null</span></code> when data for them is not available, <strong>notably when the compass module is absent</strong>.</li><li>With the exception of the device configuration fields, data is provided in the format described by the W3C Device Orientation specification:<ul><li><a href="http://developer.apple.com/library/safari/#documentation/SafariDOMAdditions/Reference/DeviceOrientationEventClassRef/DeviceOrientationEvent/DeviceOrientationEvent.html">Apple's summary of the W3C specification</a>, including their <code>compassHeading</code> specification</li><li><a href="http://www.html5rocks.com/en/tutorials/device/orientation/">Google's tutorial on using DeviceMotionEvent data</a></li><li><a href="http://dev.w3.org/geo/api/spec-source-orientation.html#deviceorientation">The W3C DeviceOrientation Specification</a></li><li><a href="http://lists.w3.org/Archives/Public/public-geolocation/2011Jul/0014.html">Discussion between W3C and Apple</a></li></ul></li></ul>
+
+<h3>Discussion</h3>
+
+<ul><li>How to consolidate <code>compassHeading</code>, <code>bearing</code>, <code>azimuthAngle</code>, and <code>altitudeAngle</code></li></ul></div><div id="observation" class="in_menu"><h2>observation</h2><p>An <code>observation</code> describes a detection from an Unattended (Ground) Sensor (aka UGS) in 3-dimensional space according to the sensor's position and point-of-view.</p>
+
+<p>Obviously not all sensors are capable of 3-dimenional detections, so irrelavent fields may be omitted or filled with <code>0</code> values.</p>
+
+<p>If the sensor has no clearly defined external &quot;face&quot;, an arbitrary (but contstant) &quot;face&quot; should still be chosen.</p>
+
+<h3>JSON Representation</h3>
+
+<pre><code>{
+    &quot;azimuthAngle&quot;: <span class="number">186.869295</span>
+  , &quot;altitudeAngle&quot;: <span class="number">0</span>
+  , &quot;speed&quot;: -<span class="number">17.678</span>
+  , &quot;range&quot;: <span class="number">384</span>
+  , &quot;horizontalAngle&quot;: -<span class="number">43.130705</span>
+  , &quot;verticalAngle&quot;: <span class="number">0</span>
+  , &quot;radialVelocity&quot;: -<span class="number">13.190949</span>
+[<span class="keyword">object</span> Object]</code></pre>
+
+<h3>Fields</h3>
+
+<p>All of these fields are given in decimal as degrees or meters per second.</p>
+
+<p>The sensor should, if possible, limit the number of decimal places to the accuracy of the device.</p>
+
+<p><code>0</code> is an invalid value and as such it is excusable to misreprent a true zero reading as <code>0.00001</code>.</p>
+
+<ul><li><code>altitudeAngle</code> describes the angle of the detection relative to the zenith (straight up), which is 90 degrees perpendicular to the horizon</li><li><code>azimuthAngle</code> describes the angle of the detection relative to true north (azimuth)</li><li><p><code>speed</code> describes the true instantaneous speed, in meters per second, of the detection</p></li><li><p><code>range</code> describes the number of meters (line of sight, meaning relative to <code>altitudeAngle</code> and <code>azimuthAngle</code>) of the detection</p></li><li><p><code>horizontalAngle</code> is analogous to <code>azimuthAngle</code>, but relative only to the &quot;face&quot; of the sensor, not true north.</p></li><li><code>verticalAngle</code> is analogous to <code>altitudeAngle</code>, but relative only to the &quot;top&quot; of the sensor, not zenith.</li><li><code>radialVelocity</code> is analogous to <code>speed</code>, but relative only to the component of velocity directed toward the sensor.</li></ul>
+
+<h3>Custom Extensions</h3>
+
+<p>Any non-standard extension to the observation should be prefixed with <code>x_</code> and followed by a <code>camelCase</code> name.</p>
+
+<p>Please bring the discussed to the mailing list, as the focus of MILSON is to create meaningful general purpose standards.</p>
+
+<h3>Resources</h3>
+
+<ul><li><a href="http://en.wikipedia.org/wiki/Zenith">Wikipedia: Zenith</a></li><li><a href="http://en.wikipedia.org/wiki/Horizontal_coordinate_system">Wikipedia: Horizontal Coordinate System</a></li></ul>
+
+<h3>Discussion</h3>
+
+<ul><li>What about radians?</li><li>Why not represent the data in relative or absolute format rather than both?</li></ul>
+
+<h3>TODO</h3>
+
+<ul><li><em>TODO video</em></li><li><em>TODO figure</em></li></ul></div></div></td></tr></tbody></table></div><div id="footer"><div class="top_wrap"><div id="flogo"><img src="images/logo.png" alt="Military Standards Object Notation"><div id="copyright">© 2012</div></div><ul id="footie_pajamas"><li><a href="http://milson.org/">Home</a></li><li>Email: ajoneal@spotterrf.com
 </li></ul></div></div></body>
