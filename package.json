@@ -1,5 +1,5 @@
 {
-  "author": "AJ ONeal <ajoneal@spotterrf.com> (http://coolaj86.info/)",
+  "author": "John Doe <john.doe@email.com> (http://john.doe.name/)",
   "name": "mildoc",
   "description": "The documentation generator used by milson.org",
   "version": "0.1.0",
@@ -12,13 +12,14 @@
   },
   "dependencies": {
     "walk": "2.1.x",
-    "remedial": "1.0.7",
+    "remedial": "1.0.x",
     "highlight": "0.2.x",
     "markdown": "0.3.x",
     "jade": "0.20.x",
     "yaml": "0.2.x",
     "json2yaml": "1.x",
-    "forEachAsync": "2.x"
+    "forEachAsync": "2.x",
+    "connect": "1.8.x"
   },
   "devDependencies": {}
 }

@@ -1,7 +1,7 @@
 (function() {
   "use strict";
   var $ = require('ender')
-    , forEachAsync = require('futures').forEachAsync
+    , forEachAsync = require('forEachAsync')
     , marginOffset = 59
     , scrollWait = 50
     , lastScroll

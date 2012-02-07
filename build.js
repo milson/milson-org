@@ -12,7 +12,7 @@
     , srcPath = __dirname + '/src'
     , path = require('path')
     , config = {}
-    // technically you can backslash and exscape and be stupid
+    // technically you can backslash and escape and be stupid
     // but for simplicity:
     // must begin with a-zA-Z
     // may have 0-9_- after the first char
@@ -234,6 +234,7 @@
         text = _text;
         // TODO where are the superflous `\n`s being introduced?
         text = renderText(text);
+        text = text.replace(/&#39;/g, "'");
         Object.keys(config.templates).forEach(function (key) {
           var val = config.templates[key]
             ;
