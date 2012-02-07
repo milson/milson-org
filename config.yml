@@ -2,37 +2,35 @@
   title: "MILSON"
   groups: 
     - 
-      pathname: "mailing_list"
+      pathname: "about"
       documents: 
         - 
-          filename: "list.md"
-          title: "Google Groups"
-          id: "list"
-      title: "Mailing List"
-      id: "mailing_list"
+          filename: "purpose.md"
+          title: "Purpose"
+          id: "purpose"
+        - 
+          filename: "google-group.jade"
+          title: "Google Group"
+          id: "google-group"
+      title: "About"
+      id: "about"
     - 
-      pathname: "activities"
+      pathname: "data-types"
       documents: 
         - 
-          filename: "current.md"
-          title: "Current"
-          id: "current"
+          filename: "geolocation.md"
+          title: "geolocation"
+          id: "geolocation"
         - 
-          filename: "past.md"
-          title: "Past"
-          id: "past"
-      title: "Activities"
-      id: "activities"
-    - 
-      pathname: "observations"
-      private: true
-      documents: 
+          filename: "orientation.md"
+          title: "orientation"
+          id: "orientation"
         - 
-          filename: "observations.md"
-          title: "observations"
-          id: "observations"
-      title: "Observations"
-      id: "observations"
+          filename: "observation.md"
+          title: "observation"
+          id: "observation"
+      title: "Data Types"
+      id: "data-types"
     - 
       pathname: "transmission"
       private: true
@@ -44,13 +42,9 @@
       title: "Transmission"
       id: "transmission"
   templates: 
-    languages: 
-      - "xml"
-      - "bash"
-      - "javascript"
-      - "java"
-      - "cs"
-      - "cpp"
+    - 
+      name: "blah"
+      value: "blah"
   languages: 
     - "xml"
     - "bash"
@@ -58,3 +52,4 @@
     - "java"
     - "cs"
     - "cpp"
+

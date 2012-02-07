@@ -26,22 +26,7 @@ body
 
 
           td.content_column
-            //- include mailing
-                include documents
-            .cwrapper(data-map='mailing_list')
-              h1#mailing_list Mailing List
-              #list.in_menu
-                h2 Google Groups
-                //- include mailing_list/list.html
-                include mailing
-            .cwrapper(data-map='activities')
-              h1#activities Activities
-              #current.in_menu
-                h2 Current
-                include activities/current.html
-              #past.in_menu
-                h2 Past
-                include activities/past.html
+            include documents
 
   #footer
     .top_wrap
