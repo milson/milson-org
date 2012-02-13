@@ -41,10 +41,15 @@
           id: "transmission"
       title: "Transmission"
       id: "transmission"
-  templates: 
     - 
-      name: "blah"
-      value: "blah"
+      pathname: "versioning"
+      documents: 
+        - 
+          filename: "semver.md"
+          title: "SemVer"
+          id: "semver"
+      title: "Versioning"
+      id: "versioning"
   languages: 
     - "xml"
     - "bash"
@@ -52,4 +57,5 @@
     - "java"
     - "cs"
     - "cpp"
+  templates: 
 

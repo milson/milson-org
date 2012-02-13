@@ -1,6 +1,6 @@
 The `orientation` of a sensor describes its angle about the x, y, and z axis in absolute, magnetic, and relative fashion.
 
-### Data
+### JSON Representation
 
     {
         "alpha": 218,
