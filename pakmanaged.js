@@ -190,6 +190,9 @@ var global = Function("return this;")()
       , attachEvent = 'attachEvent'
       , removeEvent = 'removeEventListener'
       , detachEvent = 'detachEvent'
+      , ownerDocument = 'ownerDocument'
+      , targetS = 'target'
+      , qSA = 'querySelectorAll'
       , doc = document || {}
       , root = doc.documentElement || {}
       , W3C_MODEL = root[addEvent]
@@ -199,20 +202,21 @@ var global = Function("return this;")()
       , mouseWheelTypeRegex = /mouse.*(wheel|scroll)/i
       , textTypeRegex = /^text/i
       , touchTypeRegex = /^touch|^gesture/i
-      , ONE = { one: 1 } // singleton for quick matching making add() do one()
+      , ONE = {} // singleton for quick matching making add() do one()
   
       , nativeEvents = (function (hash, events, i) {
           for (i = 0; i < events.length; i++)
             hash[events[i]] = 1
           return hash
-        })({}, (
+        }({}, (
             'click dblclick mouseup mousedown contextmenu ' +                  // mouse buttons
             'mousewheel mousemultiwheel DOMMouseScroll ' +                     // mouse wheel
             'mouseover mouseout mousemove selectstart selectend ' +            // mouse movement
             'keydown keypress keyup ' +                                        // keyboard
             'orientationchange ' +                                             // mobile
             'focus blur change reset select submit ' +                         // form elements
-            'load unload beforeunload resize move DOMContentLoaded readystatechange ' + // window
+            'load unload beforeunload resize move DOMContentLoaded '+          // window
+            'readystatechange message ' +                                      // window
             'error abort scroll ' +                                            // misc
             (W3C_MODEL ? // element.fireEvent('onXYZ'... is not forgiving if we try to fire an event
                          // that doesn't actually exist, so make sure we only do these on newer browsers
@@ -220,7 +224,7 @@ var global = Function("return this;")()
               'input invalid ' +                                                 // form elements
               'touchstart touchmove touchend touchcancel ' +                     // touch
               'gesturestart gesturechange gestureend ' +                         // gesture
-              'message readystatechange pageshow pagehide popstate ' +           // window
+              'readystatechange pageshow pagehide popstate ' +                   // window
               'hashchange offline online ' +                                     // window
               'afterprint beforeprint ' +                                        // printing
               'dragstart dragenter dragover dragleave drag drop dragend ' +      // dnd
@@ -231,28 +235,29 @@ var global = Function("return this;")()
               'checking noupdate downloading cached updateready obsolete ' +     // appcache
               '' : '')
           ).split(' ')
-        )
+        ))
   
       , customEvents = (function () {
           var cdp = 'compareDocumentPosition'
-          var isAncestor = cdp in root
-            ? function (element, container) {
-                return container[cdp] && (container[cdp](element) & 16) === 16
-              }
-            : 'contains' in root
-              ? function (element, container) {
-                  container = container.nodeType === 9 || container === window ? root : container
-                  return container !== element && container.contains(element)
-                }
-              : function (element, container) {
-                  while (element = element.parentNode) if (element === container) return 1
-                  return 0
-                }
+            , isAncestor = cdp in root
+                ? function (element, container) {
+                    return container[cdp] && (container[cdp](element) & 16) === 16
+                  }
+                : 'contains' in root
+                  ? function (element, container) {
+                      container = container.nodeType === 9 || container === window ? root : container
+                      return container !== element && container.contains(element)
+                    }
+                  : function (element, container) {
+                      while (element = element.parentNode) if (element === container) return 1
+                      return 0
+                    }
   
           function check(event) {
             var related = event.relatedTarget
-            if (!related) return related === null
-            return (related !== this && related.prefix !== 'xul' && !/document/.test(this.toString()) && !isAncestor(related, this))
+            return !related
+              ? related === null
+              : (related !== this && related.prefix !== 'xul' && !/document/.test(this.toString()) && !isAncestor(related, this))
           }
   
           return {
@@ -260,7 +265,7 @@ var global = Function("return this;")()
             , mouseleave: { base: 'mouseout', condition: check }
             , mousewheel: { base: /Firefox/.test(navigator.userAgent) ? 'DOMMouseScroll' : 'mousewheel' }
           }
-        })()
+        }())
   
       , fixEvent = (function () {
           var commonProps = 'altKey attrChange attrName bubbles cancelable ctrlKey currentTarget detail eventPhase getModifierState isTrusted metaKey relatedNode relatedTarget shiftKey srcElement target timeStamp type view which'.split(' ')
@@ -269,6 +274,7 @@ var global = Function("return this;")()
             , keyProps = commonProps.concat('char charCode key keyCode keyIdentifier keyLocation'.split(' '))
             , textProps = commonProps.concat(['data'])
             , touchProps = commonProps.concat('touches targetTouches changedTouches scale rotation'.split(' '))
+            , messageProps = commonProps.concat(['data', 'origin', 'source'])
             , preventDefault = 'preventDefault'
             , createPreventDefault = function (event) {
                 return function () {
@@ -309,17 +315,17 @@ var global = Function("return this;")()
   
             var props
               , type = event.type
-              , target = event.target || event.srcElement
+              , target = event[targetS] || event.srcElement
   
             result[preventDefault] = createPreventDefault(event)
             result[stopPropagation] = createStopPropagation(event)
             result.stop = createStop(result)
-            result.target = target && target.nodeType === 3 ? target.parentNode : target
+            result[targetS] = target && target.nodeType === 3 ? target.parentNode : target
   
             if (isNative) { // we only need basic augmentation on custom events, the rest is too expensive
               if (type.indexOf('key') !== -1) {
                 props = keyProps
-                result.keyCode = event.which || event.keyCode
+                result.keyCode = event.keyCode || event.which
               } else if (mouseTypeRegex.test(type)) {
                 props = mouseProps
                 result.rightClick = event.which === 3 || event.button === 2
@@ -339,12 +345,14 @@ var global = Function("return this;")()
                 props = mouseWheelProps
               } else if (textTypeRegex.test(type)) {
                 props = textProps
+              } else if (type === 'message') {
+                props = messageProps
               }
               copyProps(event, result, props || commonProps)
             }
             return result
           }
-        })()
+        }())
   
         // if we're in old IE we can't do onpropertychange on doc or win so we use doc.documentElement for both
       , targetElement = function (element, isNative) {
@@ -354,17 +362,17 @@ var global = Function("return this;")()
         // we use one of these per listener, of any type
       , RegEntry = (function () {
           function entry(element, type, handler, original, namespaces) {
+            var isNative = this.isNative = nativeEvents[type] && element[eventSupport]
             this.element = element
             this.type = type
             this.handler = handler
             this.original = original
             this.namespaces = namespaces
             this.custom = customEvents[type]
-            this.isNative = nativeEvents[type] && element[eventSupport]
-            this.eventType = W3C_MODEL || this.isNative ? type : 'propertychange'
-            this.customType = !W3C_MODEL && !this.isNative && type
-            this.target = targetElement(element, this.isNative)
-            this.eventSupport = this.target[eventSupport]
+            this.eventType = W3C_MODEL || isNative ? type : 'propertychange'
+            this.customType = !W3C_MODEL && !isNative && type
+            this[targetS] = targetElement(element, isNative)
+            this[eventSupport] = this[targetS][eventSupport]
           }
   
           entry.prototype = {
@@ -393,7 +401,7 @@ var global = Function("return this;")()
           }
   
           return entry
-        })()
+        }())
   
       , registry = (function () {
           // our map stores arrays by event type, just because it's better than storing
@@ -465,7 +473,19 @@ var global = Function("return this;")()
               }
   
           return { has: has, get: get, put: put, del: del, entries: entries }
-        })()
+        }())
+  
+      , selectorEngine = doc[qSA]
+          ? function (s, r) {
+              return r[qSA](s)
+            }
+          : function () {
+              throw new Error('Bean: No selector engine installed') // eeek
+            }
+  
+      , setSelectorEngine = function (e) {
+          selectorEngine = e
+        }
   
         // add and remove listeners to DOM elements
       , listener = W3C_MODEL ? function (element, type, fn, add) {
@@ -477,28 +497,31 @@ var global = Function("return this;")()
         }
   
       , nativeHandler = function (element, fn, args) {
-          var ft = fn.__findTarget
-          return function (event) {
-            event = fixEvent(event || ((this.ownerDocument || this.document || this).parentWindow || win).event, true)
-            if (ft) // delegated event, fix the fix
-              event.currentTarget = ft(event.target, element)
+          var beanDel = fn.__beanDel
+            , handler = function (event) {
+            event = fixEvent(event || ((this[ownerDocument] || this.document || this).parentWindow || win).event, true)
+            if (beanDel) // delegated event, fix the fix
+              event.currentTarget = beanDel.ft(event[targetS], element)
             return fn.apply(element, [event].concat(args))
           }
+          handler.__beanDel = beanDel
+          return handler
         }
   
       , customHandler = function (element, fn, type, condition, args, isNative) {
-          var ft = fn.__findTarget
-          return function (event) {
-            var target = ft ? ft(event.target, element) : this // deleated event
+          var beanDel = fn.__beanDel
+            , handler = function (event) {
+            var target = beanDel ? beanDel.ft(event[targetS], element) : this // deleated event
             if (condition ? condition.apply(target, arguments) : W3C_MODEL ? true : event && event.propertyName === '_on' + type || !event) {
               if (event) {
-                event = fixEvent(event || ((this.ownerDocument || this.document || this).parentWindow || win).event, isNative)
-                if (ft) // for delegated events
-                  event.currentTarget = target
+                event = fixEvent(event || ((this[ownerDocument] || this.document || this).parentWindow || win).event, isNative)
+                event.currentTarget = target
               }
               fn.apply(element, event && (!args || args.length === 0) ? arguments : slice.call(arguments, event ? 0 : 1).concat(args))
             }
           }
+          handler.__beanDel = beanDel
+          return handler
         }
   
       , once = function (rm, element, type, fn, originalFn) {
@@ -516,8 +539,8 @@ var global = Function("return this;")()
   
           for (i = 0, l = handlers.length; i < l; i++) {
             if (handlers[i].inNamespaces(namespaces)) {
-              if ((entry = handlers[i]).eventSupport)
-                listener(entry.target, entry.eventType, entry.handler, false, entry.type)
+              if ((entry = handlers[i])[eventSupport])
+                listener(entry[targetS], entry.eventType, entry.handler, false, entry.type)
               // TODO: this is problematic, we have a registry.get() and registry.del() that
               // both do registry searches so we waste cycles doing this. Needs to be rolled into
               // a single registry.forAll(fn) that removes while finding, but the catch is that
@@ -546,11 +569,13 @@ var global = Function("return this;")()
           entry.handler = entry.isNative ?
             nativeHandler(element, entry.handler, args) :
             customHandler(element, entry.handler, type, false, args, false)
-          if (entry.eventSupport)
-            listener(entry.target, entry.eventType, entry.handler, true, entry.customType)
+          if (entry[eventSupport])
+            listener(entry[targetS], entry.eventType, entry.handler, true, entry.customType)
         }
   
       , del = function (selector, fn, $) {
+              //TODO: findTarget (therefore $) is called twice, once for match and once for
+              // setting e.currentTarget, fix this so it's only needed once
           var findTarget = function (target, root) {
                 var i, array = typeof selector === 'string' ? $(selector, root) : selector
                 for (; target && target !== root; target = target.parentNode) {
@@ -561,17 +586,20 @@ var global = Function("return this;")()
                 }
               }
             , handler = function (e) {
-                var match = findTarget(e.target, this)
-                if (match)
-                  fn.apply(match, arguments)
+                var match = findTarget(e[targetS], this)
+                match && fn.apply(match, arguments)
               }
   
-          handler.__findTarget = findTarget // attach it here for customEvents to use too
+          handler.__beanDel = {
+              ft: findTarget // attach it here for customEvents to use too
+            , selector: selector
+            , $: $
+          }
           return handler
         }
   
       , remove = function (element, typeSpec, fn) {
-          var k, m, type, namespaces, i
+          var k, type, namespaces, i
             , rm = removeListener
             , isString = typeSpec && typeof typeSpec === 'string'
   
@@ -603,6 +631,7 @@ var global = Function("return this;")()
           return element
         }
   
+        // 5th argument, $=selector engine, is deprecated and will be removed
       , add = function (element, events, fn, delfn, $) {
           var type, types, i, args
             , originalFn = fn
@@ -616,7 +645,7 @@ var global = Function("return this;")()
           } else {
             args = arguments.length > 3 ? slice.call(arguments, 3) : []
             types = (isDel ? fn : events).split(' ')
-            isDel && (fn = del(events, (originalFn = delfn), $)) && (args = slice.call(args, 1))
+            isDel && (fn = del(events, (originalFn = delfn), $ || selectorEngine)) && (args = slice.call(args, 1))
             // special case for one()
             this === ONE && (fn = once(remove, element, events, fn, originalFn))
             for (i = types.length; i--;) addListener(element, types[i], fn, originalFn, args)
@@ -666,9 +695,18 @@ var global = Function("return this;")()
           var i = 0
             , handlers = registry.get(from, type)
             , l = handlers.length
+            , args, beanDel
   
-          for (;i < l; i++)
-            handlers[i].original && add(element, handlers[i].type, handlers[i].original)
+          for (;i < l; i++) {
+            if (handlers[i].original) {
+              beanDel = handlers[i].handler.__beanDel
+              if (beanDel) {
+                args = [ element, beanDel.selector, handlers[i].type, handlers[i].original, beanDel.$]
+              } else
+                args = [ element, handlers[i].type, handlers[i].original ]
+              add.apply(null, args)
+            }
+          }
           return element
         }
   
@@ -678,6 +716,7 @@ var global = Function("return this;")()
           , remove: remove
           , clone: clone
           , fire: fire
+          , setSelectorEngine: setSelectorEngine
           , noConflict: function () {
               context[name] = old
               return this
@@ -720,11 +759,9 @@ var global = Function("return this;")()
       , integrate = function (method, type, method2) {
           var _args = type ? [type] : []
           return function () {
-            for (var args, i = 0, l = this.length; i < l; i++) {
-              args = [this[i]].concat(_args, Array.prototype.slice.call(arguments, 0))
-              args.length == 4 && args.push($)
-              !arguments.length && method == 'add' && type && (method = 'fire')
-              b[method].apply(this, args)
+            for (var i = 0, l = this.length; i < l; i++) {
+              if (!arguments.length && method == 'add' && type) method = 'fire'
+              b[method].apply(this, [this[i]].concat(_args, Array.prototype.slice.call(arguments, 0)))
             }
             return this
           }
@@ -734,7 +771,7 @@ var global = Function("return this;")()
       , fire = integrate('fire')
   
       , methods = {
-            on: add
+            on: add // NOTE: .on() is likely to change in the near future, don't rely on this as-is see https://github.com/fat/bean/issues/55
           , addListener: add
           , bind: add
           , listen: add
@@ -762,16 +799,16 @@ var global = Function("return this;")()
             }
         }
   
-      , shortcuts = [
-            'blur', 'change', 'click', 'dblclick', 'error', 'focus', 'focusin'
-          , 'focusout', 'keydown', 'keypress', 'keyup', 'load', 'mousedown'
-          , 'mouseenter', 'mouseleave', 'mouseout', 'mouseover', 'mouseup', 'mousemove'
-          , 'resize', 'scroll', 'select', 'submit', 'unload'
-        ]
+      , shortcuts =
+           ('blur change click dblclick error focus focusin focusout keydown keypress '
+          + 'keyup load mousedown mouseenter mouseleave mouseout mouseover mouseup '
+          + 'mousemove resize scroll select submit unload').split(' ')
   
     for (var i = shortcuts.length; i--;) {
       methods[shortcuts[i]] = integrate('add', shortcuts[i])
     }
+  
+    b.setSelectorEngine($)
   
     $.ender(methods, true)
   }(ender)
@@ -791,36 +828,38 @@ var global = Function("return this;")()
   
   
   /*!
-    * Bonzo: DOM Utility (c) Dustin Diaz 2011
+    * Bonzo: DOM Utility (c) Dustin Diaz 2012
     * https://github.com/ded/bonzo
     * License MIT
     */
-  !function (name, definition) {
-    if (typeof module != 'undefined') module.exports = definition()
-    else if (typeof define == 'function' && define.amd) define(name, definition)
-    else this[name] = definition()
-  }('bonzo', function() {
+  (function (name, definition, context) {
+    if (typeof module != 'undefined' && module.exports) module.exports = definition()
+    else if (typeof context['define'] != 'undefined' && context['define'] == 'function' && context['define']['amd']) define(name, definition)
+    else context[name] = definition()
+  })('bonzo', function() {
     var context = this
       , win = window
       , doc = win.document
       , html = doc.documentElement
       , parentNode = 'parentNode'
       , query = null
-      , specialAttributes = /^checked|value|selected$/
-      , specialTags = /select|fieldset|table|tbody|tfoot|td|tr|colgroup/i
-      , table = [ '<table>', '</table>', 1 ]
-      , td = [ '<table><tbody><tr>', '</tr></tbody></table>', 3 ]
-      , option = [ '<select>', '</select>', 1 ]
-      , tagMap = {
-          thead: table, tbody: table, tfoot: table, colgroup: table, caption: table
-          , tr: [ '<table><tbody>', '</tbody></table>', 2 ]
+      , specialAttributes = /^(checked|value|selected)$/i
+      , specialTags = /^(select|fieldset|table|tbody|tfoot|td|tr|colgroup)$/i // tags that we have trouble inserting *into*
+      , table = ['<table>', '</table>', 1]
+      , td = ['<table><tbody><tr>', '</tr></tbody></table>', 3]
+      , option = ['<select>', '</select>', 1]
+      , noscope = ['_', '', 0, 1]
+      , tagMap = { // tags that we have trouble *inserting*
+            thead: table, tbody: table, tfoot: table, colgroup: table, caption: table
+          , tr: ['<table><tbody>', '</tbody></table>', 2]
           , th: td , td: td
-          , col: [ '<table><colgroup>', '</colgroup></table>', 2 ]
-          , fieldset: [ '<form>', '</form>', 1 ]
-          , legend: [ '<form><fieldset>', '</fieldset></form>', 2 ]
-          , option: option
-          , optgroup: option }
-      , stateAttributes = /^checked|selected$/
+          , col: ['<table><colgroup>', '</colgroup></table>', 2]
+          , fieldset: ['<form>', '</form>', 1]
+          , legend: ['<form><fieldset>', '</fieldset></form>', 2]
+          , option: option, optgroup: option
+          , script: noscope, style: noscope, link: noscope, param: noscope, base: noscope
+        }
+      , stateAttributes = /^(checked|selected)$/
       , ie = /msie/i.test(navigator.userAgent)
       , hasClass, addClass, removeClass
       , uidMap = {}
@@ -849,7 +888,9 @@ var global = Function("return this;")()
           }
         }()
       , trimReplace = /(^\s*|\s*$)/g
-      , unitless = { lineHeight: 1, zoom: 1, zIndex: 1, opacity: 1 }
+      , whitespaceRegex = /\s+/
+      , toString = String.prototype.toString
+      , unitless = { lineHeight: 1, zoom: 1, zIndex: 1, opacity: 1, boxFlex: 1, WebkitBoxFlex: 1, MozBoxFlex: 1 }
       , trim = String.prototype.trim ?
           function (s) {
             return s.trim()
@@ -889,18 +930,22 @@ var global = Function("return this;")()
   
     function data(el) {
       el[getAttribute]('data-node-uid') || el[setAttribute]('data-node-uid', ++uuids)
-      uid = el[getAttribute]('data-node-uid')
+      var uid = el[getAttribute]('data-node-uid')
       return uidMap[uid] || (uidMap[uid] = {})
     }
   
     function clearData(el) {
-      uid = el[getAttribute]('data-node-uid')
-      uid && (delete uidMap[uid])
+      var uid = el[getAttribute]('data-node-uid')
+      if (uid) delete uidMap[uid]
     }
   
-    function dataValue(d) {
+    function dataValue(d, f) {
       try {
-        return d === 'true' ? true : d === 'false' ? false : d === 'null' ? null : !isNaN(d) ? parseFloat(d) : d;
+        return (d === null || d === undefined) ? undefined :
+          d === 'true' ? true :
+            d === 'false' ? false :
+              d === 'null' ? null :
+                (f = parseFloat(d)) == d ? f : d;
       } catch(e) {}
       return undefined
     }
@@ -909,7 +954,7 @@ var global = Function("return this;")()
       return node && node.nodeName && node.nodeType == 1
     }
   
-    function some(ar, fn, scope, i) {
+    function some(ar, fn, scope, i, j) {
       for (i = 0, j = ar.length; i < j; ++i) if (fn.call(scope, ar[i], i, ar)) return true
       return false
     }
@@ -963,10 +1008,22 @@ var global = Function("return this;")()
           var n = !el[parentNode] || (el[parentNode] && !el[parentNode][parentNode]) ?
             function () {
               var c = el.cloneNode(true)
+                , cloneElems
+                , elElems
+  
               // check for existence of an event cloner
               // preferably https://github.com/fat/bean
               // otherwise Bonzo won't do this for you
-              self.$ && self.cloneEvents && self.$(c).cloneEvents(el)
+              if (self.$ && self.cloneEvents) {
+                self.$(c).cloneEvents(el)
+  
+                // clone events from every child node
+                cloneElems = self.$(c).find('*')
+                elElems = self.$(el).find('*')
+  
+                for (var i = 0; i < elElems.length; i++)
+                  self.$(cloneElems[i]).cloneEvents(elElems[i])
+              }
               return c
             }() : el
           fn(t, n)
@@ -1003,25 +1060,29 @@ var global = Function("return this;")()
     }
   
     // classList support for class management
-    // altho to be fair, the api sucks because it won't accept multiple classes at once,
-    // so we have to iterate. bullshit
+    // altho to be fair, the api sucks because it won't accept multiple classes at once
+    // so we iterate down below
     if (features.classList) {
       hasClass = function (el, c) {
-        return some(c.toString().split(' '), function (c) {
-          return el.classList.contains(c)
-        })
+        return el.classList.contains(c)
       }
       addClass = function (el, c) {
-        each(c.toString().split(' '), function (c) {
-          el.classList.add(c)
-        })
+        el.classList.add(c)
       }
-      removeClass = function (el, c) { el.classList.remove(c) }
+      removeClass = function (el, c) {
+        el.classList.remove(c)
+      }
     }
     else {
-      hasClass = function (el, c) { return classReg(c).test(el.className) }
-      addClass = function (el, c) { el.className = trim(el.className + ' ' + c) }
-      removeClass = function (el, c) { el.className = trim(el.className.replace(classReg(c), ' ')) }
+      hasClass = function (el, c) {
+        return classReg(c).test(el.className)
+      }
+      addClass = function (el, c) {
+        el.className = trim(el.className + ' ' + c)
+      }
+      removeClass = function (el, c) {
+        el.className = trim(el.className.replace(classReg(c), ' '))
+      }
     }
   
   
@@ -1043,15 +1104,13 @@ var global = Function("return this;")()
             elements :
             [elements]
         this.length = elements.length
-        for (var i = 0; i < elements.length; i++) {
-          this[i] = elements[i]
-        }
+        for (var i = 0; i < elements.length; i++) this[i] = elements[i]
       }
     }
   
     Bonzo.prototype = {
   
-        // indexr method, because jQueriers want this method
+        // indexr method, because jQueriers want this method. Jerks
         get: function (index) {
           return this[index] || null
         }
@@ -1080,7 +1139,7 @@ var global = Function("return this;")()
             html.textContent === undefined ?
               'innerText' :
               'textContent' :
-            'innerHTML', m;
+            'innerHTML';
           function append(el) {
             each(normalize(h), function (node) {
               el.appendChild(node)
@@ -1088,12 +1147,12 @@ var global = Function("return this;")()
           }
           return typeof h !== 'undefined' ?
               this.empty().each(function (el) {
-                !text && (m = el.tagName.match(specialTags)) ?
-                  append(el, m[0]) :
-                  !function() {
+                !text && specialTags.test(el.tagName) ?
+                  append(el) :
+                  (function () {
                     try { (el[method] = h) }
                     catch(e) { append(el) }
-                  }();
+                  }())
               }) :
             this[0] ? this[0][method] : ''
         }
@@ -1176,28 +1235,45 @@ var global = Function("return this;")()
   
         // class management
       , addClass: function (c) {
+          c = toString.call(c).split(whitespaceRegex)
           return this.each(function (el) {
-            hasClass(el, setter(el, c)) || addClass(el, setter(el, c))
+            // we `each` here so you can do $el.addClass('foo bar')
+            each(c, function (c) {
+              if (c && !hasClass(el, setter(el, c)))
+                addClass(el, setter(el, c))
+            })
           })
         }
   
       , removeClass: function (c) {
+          c = toString.call(c).split(whitespaceRegex)
           return this.each(function (el) {
-            hasClass(el, setter(el, c)) && removeClass(el, setter(el, c))
+            each(c, function (c) {
+              if (c && hasClass(el, setter(el, c)))
+                removeClass(el, setter(el, c))
+            })
           })
         }
   
       , hasClass: function (c) {
+          c = toString.call(c).split(whitespaceRegex)
           return some(this, function (el) {
-            return hasClass(el, c)
+            return some(c, function (c) {
+              return c && hasClass(el, c)
+            })
           })
         }
   
       , toggleClass: function (c, condition) {
+          c = toString.call(c).split(whitespaceRegex)
           return this.each(function (el) {
-            typeof condition !== 'undefined' ?
-              condition ? addClass(el, c) : removeClass(el, c) :
-              hasClass(el, c) ? removeClass(el, c) : addClass(el, c)
+            each(c, function (c) {
+              if (c) {
+                typeof condition !== 'undefined' ?
+                  condition ? addClass(el, c) : removeClass(el, c) :
+                  hasClass(el, c) ? removeClass(el, c) : addClass(el, c)
+              }
+            })
           })
         }
   
@@ -1240,8 +1316,8 @@ var global = Function("return this;")()
         }
   
       , parent: function() {
-        return this.related('parentNode')
-      }
+          return this.related(parentNode)
+        }
   
       , related: function (method) {
           return this.map(
@@ -1260,7 +1336,8 @@ var global = Function("return this;")()
   
         // meh. use with care. the ones in Bean are better
       , focus: function () {
-          return this.length > 0 ? this[0].focus() : null
+          this.length && this[0].focus()
+          return this
         }
   
       , blur: function () {
@@ -1331,6 +1408,11 @@ var global = Function("return this;")()
           while (el = el.offsetParent) {
             top = top + el.offsetTop
             left = left + el.offsetLeft
+  
+            if (el != document.body) {
+              top -= el.scrollTop
+              left -= el.scrollLeft
+            }
           }
   
           return {
@@ -1342,6 +1424,7 @@ var global = Function("return this;")()
         }
   
       , dim: function () {
+          if (!this.length) return { height: 0, width: 0 }
           var el = this[0]
             , orig = !el.offsetWidth && !el.offsetHeight ?
                // el isn't visible, can't be measured properly, so fix that
@@ -1378,7 +1461,7 @@ var global = Function("return this;")()
             return this
           }
           return typeof v == 'undefined' ?
-            specialAttributes.test(k) ?
+            !el ? null : specialAttributes.test(k) ?
               stateAttributes.test(k) && typeof el[k] == 'string' ?
                 true : el[k] : (k == 'href' || k =='src') && features.hrefExtended ?
                   el[getAttribute](k, 2) : el[getAttribute](k) :
@@ -1394,7 +1477,9 @@ var global = Function("return this;")()
         }
   
       , val: function (s) {
-          return (typeof s == 'string') ? this.attr('value', s) : this[0].value
+          return (typeof s == 'string') ?
+            this.attr('value', s) :
+            this.length ? this[0].value : null
         }
   
         // use with care and knowledge. this data() method uses data attributes on the DOM nodes
@@ -1402,15 +1487,17 @@ var global = Function("return this;")()
       , data: function (k, v) {
           var el = this[0], uid, o, m
           if (typeof v === 'undefined') {
+            if (!el) return null
             o = data(el)
             if (typeof k === 'undefined') {
               each(el.attributes, function(a) {
-                (m = (''+a.name).match(dattr)) && (o[camelize(m[1])] = dataValue(a.value))
+                (m = ('' + a.name).match(dattr)) && (o[camelize(m[1])] = dataValue(a.value))
               })
               return o
             } else {
-              return typeof o[k] === 'undefined' ?
-                (o[k] = dataValue(this.attr('data-' + decamelize(k)))) : o[k]
+              if (typeof o[k] === 'undefined')
+                o[k] = dataValue(this.attr('data-' + decamelize(k)))
+              return o[k]
             }
           } else {
             return this.each(function (el) { data(el)[k] = v })
@@ -1459,6 +1546,7 @@ var global = Function("return this;")()
   
     function scroll(x, y, type) {
       var el = this[0]
+      if (!el) return this
       if (x == null && y == null) {
         return (isBody(el) ? getWindowScroll() : { x: el.scrollLeft, y: el.scrollTop })[type]
       }
@@ -1504,11 +1592,14 @@ var global = Function("return this;")()
             , els = []
             , p = tag ? tagMap[tag[1].toLowerCase()] : null
             , dep = p ? p[2] + 1 : 1
+            , ns = p && p[3]
             , pn = parentNode
             , tb = features.autoTbody && p && p[0] == '<table>' && !(/<tbody/i).test(node)
   
           el.innerHTML = p ? (p[0] + node + p[1]) : node
           while (dep--) el = el.firstChild
+          // for IE NoScope, we may insert cruft at the begining just to get it to work
+          if (ns && el && el.nodeType !== 1) el = el.nextSibling
           do {
             // tbody special case for IE<8, creates tbody on any empty table
             // we don't want it if we're just after a <thead>, <caption>, etc.
@@ -1563,7 +1654,7 @@ var global = Function("return this;")()
       }
   
     return bonzo
-  })
+  }, this); // the only line we care about using a semi-colon. placed here for concatenation tools
   
 
   provide("bonzo", module.exports);
@@ -1579,7 +1670,7 @@ var global = Function("return this;")()
     ;
   
   
-  !function ($) {
+  (function ($) {
   
     var b =  require('bonzo')
     b.setQueryEngine($)
@@ -1616,6 +1707,7 @@ var global = Function("return this;")()
   
     $.ender({
       parents: function (selector, closest) {
+        if (!this.length) return this
         var collection = $(selector), j, k, p, r = []
         for (j = 0, k = this.length; j < k; j++) {
           p = this[j]
@@ -1681,7 +1773,7 @@ var global = Function("return this;")()
       }
   
     , children: function () {
-        var i, el, r = []
+        var i, l, el, r = []
         for (i = 0, l = this.length; i < l; i++) {
           if (!(el = b.firstChild(this[i]))) continue;
           r.push(el)
@@ -1691,26 +1783,20 @@ var global = Function("return this;")()
       }
   
     , height: function (v) {
-        return dimension(v, this, 'height')
+        return dimension.call(this, 'height', v)
       }
   
     , width: function (v) {
-        return dimension(v, this, 'width')
+        return dimension.call(this, 'width', v)
       }
     }, true)
   
-    function dimension(v, self, which) {
-      return v ?
-        self.css(which, v) :
-        function (r) {
-          if (!self[0]) return 0
-          r = parseInt(self.css(which), 10);
-          return isNaN(r) ? self[0]['offset' + which.replace(/^\w/, function (m) {return m.toUpperCase()})] : r
-        }()
+    function dimension(type, v) {
+      return typeof v == 'undefined'
+        ? b(this).dim()[type]
+        : this.css(type, v)
     }
-  
-  }(ender);
-  
+  }(ender));
 
   provide("bonzo/ender-bridge", module.exports);
   provide("bonzo/ender-bridge", module.exports);
@@ -1725,10 +1811,13 @@ var global = Function("return this;")()
     ;
   
   
+  /*!
+    * domready (c) Dustin Diaz 2012 - License MIT
+    */
   !function (name, definition) {
-    if (typeof define == 'function') define(definition)
-    else if (typeof module != 'undefined') module.exports = definition()
-    else this[name] = this['domReady'] = definition()
+    if (typeof module != 'undefined') module.exports = definition()
+    else if (typeof define == 'function' && typeof define.amd == 'object') define(definition)
+    else this[name] = definition()
   }('domready', function (ready) {
   
     var fns = [], fn, f = false
@@ -1738,7 +1827,8 @@ var global = Function("return this;")()
       , domContentLoaded = 'DOMContentLoaded'
       , addEventListener = 'addEventListener'
       , onreadystatechange = 'onreadystatechange'
-      , loaded = /^loade|c/.test(doc.readyState)
+      , readyState = 'readyState'
+      , loaded = /^loade|c/.test(doc[readyState])
   
     function flush(f) {
       loaded = 1
@@ -1751,12 +1841,12 @@ var global = Function("return this;")()
     }, f)
   
   
-    hack && doc.attachEvent(onreadystatechange, (fn = function () {
-      if (/^c/.test(doc.readyState)) {
+    hack && doc.attachEvent(onreadystatechange, fn = function () {
+      if (/^c/.test(doc[readyState])) {
         doc.detachEvent(onreadystatechange, fn)
         flush()
       }
-    }))
+    })
   
     return (ready = hack ?
       function (fn) {
@@ -1849,10 +1939,12 @@ var global = Function("return this;")()
     ;
   
   
+  /*jshint node:true laxcomma:true es5:true laxbreak:true*/
   (function() {
     "use strict";
     var $ = require('ender')
       , forEachAsync = require('forEachAsync')
+      , domReady = require('domready')
       , marginOffset = 59
       , scrollWait = 50
       , lastScroll
@@ -1922,13 +2014,14 @@ var global = Function("return this;")()
       setTimeout(function() {
         var sel = $('.menu')[0];
         sel.style.display = 'none';
-        sel.offsetHeight;
+        // yes this hack does something
+        sel.offsetHeight = sel.offsetHeight;
         sel.style.display = 'block';
       }, 1);
     }
   
     function assignHandlers() {
-      window.onscroll = menuStick;
+      require('window').onscroll = menuStick;
       contentBlocks = [];
   
       $('.cwrapper').forEach(function(el, i) {
@@ -1944,8 +2037,7 @@ var global = Function("return this;")()
       $('.doc_columns').delegate('.menu_column', 'click', chromeRedrawFix);
     }
   
-    $.domReady(assignHandlers);
-  
+    domReady(assignHandlers);
   
   }());
   

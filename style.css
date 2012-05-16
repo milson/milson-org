@@ -19,10 +19,13 @@ pre .css .id,
 pre .lisp .title {
   color: #E3CEAB;
 }
-pre .django .template_tag, pre .django .variable, pre .django .filter .argument {
+pre .django .template_tag,
+pre .django .variable,
+pre .django .filter .argument {
   color: #DCDCDC;
 }
-pre .number, pre .date {
+pre .number,
+pre .date {
   color: #8CD0D3;
 }
 pre .dos .envvar,
@@ -39,7 +42,8 @@ pre .literal,
 pre .tex .special {
   color: #EFEFAF;
 }
-pre .diff .chunk, pre .ruby .subst {
+pre .diff .chunk,
+pre .ruby .subst {
   color: #8F8F8F;
 }
 pre .dos .keyword,
@@ -202,10 +206,12 @@ section {
 body {
   line-height: 100%;
 }
-ol, ul {
+ol,
+ul {
   list-style: none;
 }
-blockquote, q {
+blockquote,
+q {
   quotes: none;
 }
 blockquote:before,
