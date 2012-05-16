@@ -1,7 +1,9 @@
+/*jshint node:true laxcomma:true es5:true laxbreak:true*/
 (function() {
   "use strict";
   var $ = require('ender')
     , forEachAsync = require('forEachAsync')
+    , domReady = require('domready')
     , marginOffset = 59
     , scrollWait = 50
     , lastScroll
@@ -71,13 +73,14 @@
     setTimeout(function() {
       var sel = $('.menu')[0];
       sel.style.display = 'none';
-      sel.offsetHeight;
+      // yes this hack does something
+      sel.offsetHeight = sel.offsetHeight;
       sel.style.display = 'block';
     }, 1);
   }
 
   function assignHandlers() {
-    window.onscroll = menuStick;
+    require('window').onscroll = menuStick;
     contentBlocks = [];
 
     $('.cwrapper').forEach(function(el, i) {
@@ -93,7 +96,6 @@
     $('.doc_columns').delegate('.menu_column', 'click', chromeRedrawFix);
   }
 
-  $.domReady(assignHandlers);
-
+  domReady(assignHandlers);
 
 }());
