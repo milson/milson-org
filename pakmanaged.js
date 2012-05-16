@@ -2012,10 +2012,13 @@ var global = Function("return this;")()
   
     function chromeRedrawFix() {
       setTimeout(function() {
-        var sel = $('.menu')[0];
+        var sel = $('.menu')[0]
+          , ignore
+          ;
+  
         sel.style.display = 'none';
         // yes this hack does something
-        sel.offsetHeight = sel.offsetHeight;
+        ignore = sel.offsetHeight;
         sel.style.display = 'block';
       }, 1);
     }
