@@ -1,28 +1,78 @@
-Current Status: Discussion (pre-draft)
+MILSON is a specification (Military Simulation Objects Notation) managed by the MILSON Working Group, which defines the object notation and modes of transportation for data concerning spacial objects beteween integrated systems.
 
-MILSON is a specification (Military Standard Objects Notation) managed by the MILSON Working Group, which defines how data concerning spacial objects should be communicated beteween integrated systems.
+[Augmented Reality](http://en.wikipedia.org/wiki/Augmented_reality) (AR) is here.
+
+As more technology and sensor devices formally only available to the military
+become affordable and available to civilians (ex-mil, professionals, and hobbyists) participating in 
+[MilSim](http://en.wikipedia.org/wiki/MilSim),
+such as
+[airsoft](http://en.wikipedia.org/wiki/Airsoft)
+and
+[paintball](http://en.wikipedia.org/wiki/Paintball) turnaments,
+the need for a well defined standard to communicate between such systems has become increasingly apparent.
+
+Unlike other working groups in the field MILSON is
+
+  * Open and transparent (not classified or proprietary)
+  * Developer-oriented (because we understand software and hardware)
+
+### Goals
+
+  * Cater to the speed of development in the commercial sector.
+
+  * Provide easy integration between sensors and devices such as
+
+    * [Motion Sensors](http://clipaday.com/videos/motion-sensor-paintball-gun)
+    * [IR Cameras](http://dopepaintball.com/auction.php?QueryKeywords=ir%20camera)
+    * Airsoft and Paintball [Turrets](http://www.youtube.com/watch?v=6QcfZGDvHU8) and [Sentry](http://www.paintballsentry.com/)
+    * [Homebrew Radar](http://www.youtube.com/watch?v=MViVyocQhVw)
+    * [AR Drones](http://ardrone.parrot.com/)
+
+    to modern controllers such as
+
+    * iPad, iPhone, iPod
+    * Android tables, phones, and smart devices
+    * Android TVs
+    * Dev boards - Arduino, Raspberry Pi, Pandaboard
+    * Game consoles (they're cheap, easy to hack, and powerful) - Wii, PlayStation, XBox
+
+  * Provide easier integration point between newer systems and [Terra Harvest](http://terraharvest.net/).
+
+  * Provide an easier bridge between legacy systems and Terra Harvest.
 
 ###Principles
 
-  * Documentation should be easy to understand
-  * Documentation and community should be easy to access
-  * Specifications should be easy to parse and easy to implement
-  * Specifications should rely on object notations (JSON), rather than document markups (\*ML)
-  * Specifications should lean on and draw from available open standards (and use them where it makes sense)
-  * Specifications should be bandwidth friendly
+  * Docs should be easy to understand
+  * Docs and community should be easy to access
+  * Specs should be easy to parse and easy to implement
+  * Specs should rely on object notations (JSON), rather than document markups (\*ML) that are designed only to work with Java
+  * Specs should lean on and draw from available open standards (and use them where it makes sense)
+  * Data should be bandwidth friendly
+  * MILSON should be adequate for use in actual military systems
 
 ###Specifications
 
+  * Unattended Sensors
+    * Cameras
+    * Radars
+    * IR
+    * Sonar
+    * etc
   * Object Notation
   * Unattended Sensor Observations
+    * 3-d space
   * Unattended Sensor Capabilities
     * Movement
     * Media Streams
   * Network Transport
     * connection
     * resources
-    * compression
-  * Integration with Terra Harvest
+    * compression (zlib / gzip)
+    * content-type (json, jpeg, png, raw binary, etc)
+
+### Real Military Standars
+
+These standards 
 
 ###Existing Standards
 

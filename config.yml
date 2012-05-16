@@ -18,6 +18,10 @@
       pathname: "data-types"
       documents: 
         - 
+          filename: "glossary.md"
+          title: "Glossary"
+          id: "glossary"
+        - 
           filename: "geolocation.md"
           title: "geolocation"
           id: "geolocation"
