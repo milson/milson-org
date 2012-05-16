@@ -36,10 +36,6 @@ Unlike other working groups in the field MILSON is
     * Dev boards - Arduino, Raspberry Pi, Pandaboard
     * Game consoles (they're cheap, easy to hack, and powerful) - Wii, PlayStation, XBox
 
-  * Provide easier integration point between newer systems and [Terra Harvest](http://terraharvest.net/).
-
-  * Provide an easier bridge between legacy systems and Terra Harvest.
-
 ###Principles
 
   * Docs should be easy to understand
