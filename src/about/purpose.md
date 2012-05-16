@@ -66,10 +66,6 @@ Unlike other working groups in the field MILSON is
     * compression (zlib / gzip)
     * content-type (json, jpeg, png, raw binary, etc)
 
-### Real Military Standars
-
-These standards 
-
 ###Existing Standards
 
   * [Semantic Versioning](http://semver.org)
