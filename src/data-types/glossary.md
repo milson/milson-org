@@ -1,22 +1,8 @@
-This is a glossary of all properties related to 3D space.
+### Generally speaking
 
-All properties are used to describe an **`observation`** of a *target* as either **relative to a `sensor`** or **absolute** (relative to known constants).
+This is a glossary of all properties defined by MILSON, especially those related to 3D space.
 
-Examples of **`observers`**
-
-  * person
-  * camera
-  * sonar
-  * radar
-  * ir sensor
-  
-Examples of **`absolute constants`**
-
-  * north
-  * zenith
-  * ground (according to gravity)
-
-Generally speaking
+All properties are used to describe an *observation* of a *target* as either **relative to a *sensor* ** or **absolute** (relative to *known constants*).
 
   * standard units, not imperial units
   * degrees, not radians
@@ -26,9 +12,25 @@ Generally speaking
   * `null` values indicate an error and or lack of information
   * receive loosely to spec (ignore whitespace, accept accidental -90 when spec is 0 - 180)
   * all numbers are of type `Number`, meaning `double` or `BIGDECIMAL`
-  * a "sensor" is an "observer"
-  * a "target" is an "observation"
-  * an "object" is any object in 3-d space
+  * a *sensor* is an *observer*
+  * a *target* is an *observation*
+  * an *object* is any object in 3-d space
+
+#### Examples of *sensors* (*observers*)
+
+  * person
+  * camera
+  * sonar
+  * radar
+  * ir sensor
+  
+#### Examples of *absolute constants*
+
+  * north
+  * zenith
+  * ground (according to gravity)
+
+
 
 ### Primitive Types
 
@@ -170,7 +172,7 @@ Here's a quick list of every property and it's meaning:
     * angle to the detection side-to-side from the *sensor*'s line of sight (positive is to the right)
     * direction used to draw a relative *line of bearing* from a *sensor* to a *target*
     * relative to *face of sensor*
-    * IDEALLY the same as *azimuthAngle*, if the sensor is equipped with a magnetometer
+    * IDEALLY the same as *azimuthAngle*, if the *sensor* is equipped with a magnetometer
     * in degrees
     * `null` on error or unavailable
 
@@ -183,7 +185,7 @@ Here's a quick list of every property and it's meaning:
     * in decimal degrees
     * `null` on error or unavailable
 
-  * *line of bearing*
+  * *line of bearing* (lob)
     * a line from a *sensor* to a *target*
 
   * `longitude` - Longitude in decimal format (`-180` to `180`)
@@ -213,11 +215,14 @@ Here's a quick list of every property and it's meaning:
     * point of reference is the face of a *sensor*
     * directs to a *target*
 
+  * `pitch` (orientation)
+    * `beta` translated from the unit circle to coordinates more familiar to most people
+
   * `radialVelocity`
     * component of *target*'s velocity directed towards the *sensor*
     * positive (+) means the *target* is moving towards the *sensor*
     * negative (-) means the *target* is moving away from the *sensor*
-    * if I'm walking 1m/s perpendicular to a *sensor*'s line-of-sight, this number is 0 (because none of my movement is towards the sensor)
+    * if I'm walking 1m/s perpendicular to a *sensor*'s line-of-sight, this number is 0 (because none of my movement is towards the *sensor*)
     * if I'm walking 1m/s at 45° to a *sensor*'s line-of-sight, this number will change as I walk (due to the radial nature of the measurement)
     * in meters per second (m/s)
     * `null` on error or unavailable
@@ -232,6 +237,9 @@ Here's a quick list of every property and it's meaning:
     * All other positions are relative to this position
     * If the object is level with the ground, pointed towards north, and standing straight, then it is also in *natural position*
     * If a device is capable of doing so (i.e. it has magnetometer, accelerometer, gyro, etc), it SHOULD orient its *reset position* the same as *natural position*
+
+  * `roll`
+    * `alpha` translated from the unit circle to coordinates more familiar to most people
 
   * `semver` (version)
     * see [semver.org](http://semver.org)
@@ -267,14 +275,9 @@ Here's a quick list of every property and it's meaning:
     * the angle above horizontal to the detection relative to the *sensor*'s line of sight
     * direction used to draw a relative *line of bearing* from a *sensor* to a *target*
     * relative to *base of sensor* (it's bottom)
-    * IDEALLY the same as *altitudeAngle*, if the sensor is equipped with an accelerometer
+    * IDEALLY the same as *altitudeAngle*, if the *sensor* is equipped with an accelerometer
     * in degrees
     * `null` on error or unavailable
-  
-### TODO
 
-Many of the angles still need degree ranges defined - azimuthAngle, altitudeAngle, etc
-
-yaw, pitch, roll are not defined
-
-elevationAngle vs altitudeAngle
+  * `yaw` (orientation)
+    * `gamma` translated from the unit circle to coordinates more familiar to most people
