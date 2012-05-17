@@ -14,7 +14,7 @@ Examples of **`absolute constants`**
 
   * north
   * zenith
-  * ground (wrt gravity)
+  * ground (according to gravity)
 
 Generally speaking
 
@@ -22,12 +22,48 @@ Generally speaking
   * degrees, not radians
   * meters, not yards
   * transmit strictly to spec
+  * *sensor*s SHOULD limit the number of decimal places to the accuracy of the device
   * `null` values indicate an error and or lack of information
   * receive loosely to spec (ignore whitespace, accept accidental -90 when spec is 0 - 180)
   * all numbers are of type `Number`, meaning `double` or `BIGDECIMAL`
   * a "sensor" is an "observer"
   * a "target" is an "observation"
   * an "object" is any object in 3-d space
+
+### Primitive Types
+
+The types are very exactly defined at [json.org](http://json.org/). In summary:
+
+  * `Array`
+    * a list of 0-indexed items
+    * `[ <value0>, <value1>, ... ]`
+    * in practice arrays are typed (implicitly by the receiving system), but the specification doesn't require it
+
+  * `Boolean`
+    * `true`
+    * `false`
+
+  * `null`
+    * often included for completeness or to signify an error
+
+  * `Number`
+    * signed decimals (64-bit float)
+    * scientific notation (i.e. `1.23e+10`)
+
+  * `Object`
+    * key/value pairs
+    * keynames must be surrounded by quotes
+    * example: `{ "key": <value> }`
+    * in practice objects are either typed (implicitly by the receiving system) or used as a HashMap
+
+  * `String`
+    * uses double quotes, escaped with `\`
+    * example: `"a string with a \" and a \\"`
+    * allows unicode and utf8
+    * disallows some control characters
+    * see [json.org](http://json.org) for escape sequences
+
+  * `value` is any of `Array`, `Boolean`, `null`, `Number`, `Object`, or `String`
 
 Here's a quick list of every property and it's meaning:
 
@@ -48,14 +84,13 @@ Here's a quick list of every property and it's meaning:
     * `null` on error or unavailable
 
   * `altitudeAngle` (lob)
-    * direction used to draw an absolute *line of bearing* from a *sensor* to a *target*
-    * relative to zenith (90°) and ground (0°)
-    * in decimal degrees
-    * `null` on error or unavailable
+    * depracated. see `elevationAngle`
     
   * `azimuthAngle` (lob)
     * direction used to draw an absolute *line of bearing* from a *sensor* to a *target*
     * relative to *true north*
+    * transmitters SHOULD transmit such that **0° ≤ azimuthAngle < 360°**
+    * receivers MUST accept -360° ≤ azimuthAngle ≤ 360° and adjust accordingly
     * in degrees
     * `null` on error or unavailable
 
@@ -84,7 +119,7 @@ Here's a quick list of every property and it's meaning:
     * based on magnetic reading from a compass
     * does NOT correct for or include `declination`
     * transmitters SHOULD transmit such that **0° ≤ compassHeading < 360°**
-    * receivers MUST accept -360° ≤ alpha ≤ 360° and adjust accordingly
+    * receivers MUST accept -360° ≤ compassHeading ≤ 360° and adjust accordingly
     * in degrees
     * `null` on error or unavailable
 
@@ -95,7 +130,12 @@ Here's a quick list of every property and it's meaning:
     * `null` on error or unavailable
 
   * `elevationAngle` (lob)
-    * see `altitudeAngle`
+    * direction used to draw an absolute *line of bearing* from a *sensor* to a *target*
+    * relative to zenith (90°) and ground (0°)
+    * transmitters SHOULD transmit such that **-90° ≤ elevationAngle ≤ 90°**
+    * receivers MUST accept -360° ≤ elevationAngle ≤ 360° and adjust accordingly
+    * in decimal degrees
+    * `null` on error or unavailable
 
   * `gamma` (orientation)
     * rotation about the Y axis relative to "reset position"
@@ -156,11 +196,17 @@ Here's a quick list of every property and it's meaning:
     * in decimal degrees
     * `null` on error or unavailable
 
+  * *magnetic north*
+    * north as read by a magnetic compass, not the north pole
+
   * *natural position* - the position at which relative and absolute descriptions happen to be the same and still make sense
     * the front of the object is towards north
     * the object is standing straight, with its bottom towards the ground
     * the sides of the object are level, the way you want a picture-frame
     * if the object is a ball... arbitrarily sharpy a dot perpendicular to each axis and call it good
+
+  * *north*
+    * deprecated. see *true north* or *magnetic north*
 
   * `observation`
     * a set of relative coordinates
@@ -177,7 +223,7 @@ Here's a quick list of every property and it's meaning:
     * `null` on error or unavailable
 
   * `range` (lob)
-    * distance to *target* from *sensor*
+    * distance from *target* to *sensor*
     * in meters
     * `null` on error or unavailable
 
@@ -187,12 +233,36 @@ Here's a quick list of every property and it's meaning:
     * If the object is level with the ground, pointed towards north, and standing straight, then it is also in *natural position*
     * If a device is capable of doing so (i.e. it has magnetometer, accelerometer, gyro, etc), it SHOULD orient its *reset position* the same as *natural position*
 
+  * `semver` (version)
+    * see [semver.org](http://semver.org)
+    * example: 1.0.4-alpha.17
+    * `String`
+
+  * `serial` (product)
+    * unique identifier for a product line by a vendor
+    * made unique by `vendorId`, `productId`, and `serial`
+    * some vendors may fudge model information into `serial` if `serial`s are not unique across products
+    * String
+
   * `speed`
     * positive measure of speed
     * if I'm walking 1m/s perpendicular to a *sensor*'s line-of-sight, this number is 1m/s
     * in meters per second (m/s)
     * `null` on error or unavailable
       
+  * `timestamp`
+    * milliseconds since unix epoch
+    * in milliseconds
+
+  * *true north*
+    * the north pole, not magnetic north
+
+  * `vendor` (product)
+    * an alphanumeric representation of the vendor's name
+    * case insensitive
+    * whitespace insensitive
+    * receivers MUST allow for utf-8 and escaped unicode names
+
   * `verticalAngle` (lob)
     * the angle above horizontal to the detection relative to the *sensor*'s line of sight
     * direction used to draw a relative *line of bearing* from a *sensor* to a *target*

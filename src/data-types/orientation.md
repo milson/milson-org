@@ -13,21 +13,6 @@ The `orientation` of a sensor describes its angle about the x, y, and z axis in 
         "absolute": true,
     }
 
-### Fields
-
-  * `alpha` - rotation about the Z axis
-    * positive when rotated counterclockwise, facing the front of the sensor
-    * from 0 to 359.9 degrees
-  * `beta` - rotation about the X axis
-    * positive when tipping the top of the sensor towards the observer
-    * from -180 to 179.9 degrees
-  * `gamma` - rotation about the Y axis
-    * positive when rotated counterclockwise looking down at the top of the sensor
-    * from -90 to 89.9 degrees
-  * `compassHeading` - what bearing the front of the sensor is facing relative to **true** north, -360 to 360 degrees
-  * `absolute` - `true` if the sensor has a compass module as well
-  * `compassNeedsCalibration`
-
 ### Notes
 
   * If no compass module is present, then `useDeclination`, `getNewOrientation` and `acquireOrientationOnBoot` will have no effect. `compassHeading` will keep its user-defined value.
