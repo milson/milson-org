@@ -1,14 +1,20 @@
-### Generally speaking
-
-[w3c-coords]: http://dev.w3.org/geo/api/spec-source.html#coordinates_interface
-
 This specification is based on the following:
 
-    * [W3C Geolocation Coordinates][w3c-coords]
+[w3c-coords]: http://dev.w3.org/geo/api/spec-source.html#coordinates_interface
+[w3c-orientation]: http://dev.w3.org/geo/api/spec-source-orientation.html#deviceorientation
+[google-orientation]: http://www.html5rocks.com/en/tutorials/device/orientation/
+[safari-orientation]: http://developer.apple.com/library/safari/#documentation/SafariDOMAdditions/Reference/DeviceOrientationEventClassRef/DeviceOrientationEvent/DeviceOrientationEvent.html
+
+  * [W3C Geolocation Coordinates][w3c-coords]
+  * [W3C Device Orientation][w3c-orientation]
+    * [Google's Device Orientation][google-orientation]
+    * [Apple's Device Orientation][safari-orientation]
 
 This is a glossary of all properties defined by MILSON, especially those related to 3D space.
 
 All properties are used to describe an *observation* of a *target* as either **relative to a sensor** (line-ofbearing) or **absolute** (relative to the earth's *known constants*).
+
+### Generally speaking
 
   * standard units, not imperial units
   * degrees, not radians
@@ -76,13 +82,13 @@ The types are very exactly defined at [json.org](http://json.org/). In summary:
 Here's a quick list of every property and it's meaning:
 
   * `accuracy` (geolocation)
-    * the `latitude` and `longitude` are accurate with `n` meters
+    * the `latitude` and `longitude` are accurate within `n` meters
     * in meters
     * `null` or `0` on error or unavailable
 
   * `alpha` (orientation)
     * rotation about the Z axis relative to "reset position"
-    * loosely analogous to descriptions such as *side-to-side*, *tilt*, and *roll*
+    * loosely analogous to descriptions such as *side-to-side*, and *roll*
     * positive when rotated counter-clockwise, facing the front of the *sensor*
     * transmitters SHOULD transmit such that **0° ≤ alpha < 360°**
     * receivers MUST accept -360° ≤ alpha ≤ 360° and adjust accordingly
@@ -123,7 +129,7 @@ Here's a quick list of every property and it's meaning:
 
   * `beta` (orientation)
     * rotation about the X axis relative to "reset position"
-    * loosely analogous to descriptions such as *front-to-back*, *vertical angle*, and *pitch*
+    * loosely analogous to descriptions such as *front-to-back*, *tilt*, *vertical angle*, and *pitch*
     * positive when tipping the top of the *sensor* towards its front
     * transmitters SHOULD transmit such that **-90° ≤ beta ≤ 90°**
     * receivers MUST accept -180° ≤ beta ≤ 180° and adjust accordingly
@@ -157,7 +163,7 @@ Here's a quick list of every property and it's meaning:
 
   * `gamma` (orientation)
     * rotation about the Y axis relative to "reset position"
-    * loosely analogous to descriptions such as *left-to-right*, *horizontal angle*, and *yaw*
+    * loosely analogous to descriptions such as *left-to-right*, *pan*, *horizontal angle*, and *yaw*
     * positive when rotated counterclockwise looking down at the top of the *sensor*
     * transmitters SHOULD transmit such that **-180° ≤ gamma ≤ 180°**
     * receivers MUST accept -360° ≤ gamma ≤ 360° and adjust accordingly
@@ -232,6 +238,12 @@ Here's a quick list of every property and it's meaning:
     * point of reference is the face of a *sensor*
     * directs to a *target*
 
+  * `orientation`
+    * a set of coordinates referencing the *reset position* of a device, as well as absolutes such as true north
+    * designed to comply with the [The W3C DeviceOrientation Specification][w3c-orientation] and similar standards
+      * [Apple's summary of the W3C specification][safari-orientation], including their `compassHeading` specification
+      * [Google's tutorial on using DeviceMotionEvent data][google-orientation]
+
   * `pitch` (orientation)
     * `beta` translated from the unit circle to coordinates more familiar to most people
 
@@ -250,7 +262,7 @@ Here's a quick list of every property and it's meaning:
     * `null` on error or unavailable
 
   * *reset position* - When a device is powered on or reset, it generally believes that it is in this position, even if it's upside-down, backwards, and skewed.
-    * The position at which `alpha`, `betta`, and `gamma` are 0
+    * The position at which `alpha`, `beta`, and `gamma` are 0
     * All other positions are relative to this position
     * If the object is level with the ground, pointed towards north, and standing straight, then it is also in *natural position*
     * If a device is capable of doing so (i.e. it has magnetometer, accelerometer, gyro, etc), it SHOULD orient its *reset position* the same as *natural position*
