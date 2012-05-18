@@ -1,8 +1,14 @@
 ### Generally speaking
 
+[w3c-coords]: http://dev.w3.org/geo/api/spec-source.html#coordinates_interface
+
+This specification is based on the following:
+
+    * [W3C Geolocation Coordinates][w3c-coords]
+
 This is a glossary of all properties defined by MILSON, especially those related to 3D space.
 
-All properties are used to describe an *observation* of a *target* as either **relative to a *sensor* ** or **absolute** (relative to *known constants*).
+All properties are used to describe an *observation* of a *target* as either **relative to a sensor** (line-ofbearing) or **absolute** (relative to the earth's *known constants*).
 
   * standard units, not imperial units
   * degrees, not radians
@@ -69,6 +75,11 @@ The types are very exactly defined at [json.org](http://json.org/). In summary:
 
 Here's a quick list of every property and it's meaning:
 
+  * `accuracy` (geolocation)
+    * the `latitude` and `longitude` are accurate with `n` meters
+    * in meters
+    * `null` or `0` on error or unavailable
+
   * `alpha` (orientation)
     * rotation about the Z axis relative to "reset position"
     * loosely analogous to descriptions such as *side-to-side*, *tilt*, and *roll*
@@ -85,6 +96,11 @@ Here's a quick list of every property and it's meaning:
     * in meters
     * `null` on error or unavailable
 
+  * `altitudeAccuracy` (geolocation)
+    * the `altitude` is accurate with `n` meters
+    * in meters
+    * `null` or `0` on error or unavailable
+
   * `altitudeAngle` (lob)
     * depracated. see `elevationAngle`
     
@@ -99,7 +115,7 @@ Here's a quick list of every property and it's meaning:
   * `bearing` (orientation)
     * relative to *true north*
     * includes `declination` if read from magnetic compass
-    * the direction the object is **facing**
+    * the direction the *object* is **facing**
     * NOT the direction of travel
     * If I'm walking backwards, moving south with my face and chest facing due north, my `bearing` is north
     * in degrees
@@ -155,7 +171,7 @@ Here's a quick list of every property and it's meaning:
 
 
   * `HAE` (reference)
-    * height above ellipsoid
+    * "Height Above Ellipsoid"
     * WGS-84 altitude
 
   * `heading` (geolocation)
@@ -168,7 +184,7 @@ Here's a quick list of every property and it's meaning:
     * in degrees
     * `null` on error or unavailable
 
-  * `horizontalAngle`
+  * `horizontalAngle` (lob)
     * angle to the detection side-to-side from the *sensor*'s line of sight (positive is to the right)
     * direction used to draw a relative *line of bearing* from a *sensor* to a *target*
     * relative to *face of sensor*
@@ -187,8 +203,9 @@ Here's a quick list of every property and it's meaning:
 
   * *line of bearing* (lob)
     * a line from a *sensor* to a *target*
+    * this line may be relative to the *sensor* (`horizontalAngle`, `verticalAngle`) or relative to the earth (`azimuthAngle`, `elevationAngle`)
 
-  * `longitude` - Longitude in decimal format (`-180` to `180`)
+  * `longitude` - (geolocation)
     * WGS-84 (GPS) longitude
     * straight lines running from north to south
     * perpendicular to the equator
@@ -218,7 +235,7 @@ Here's a quick list of every property and it's meaning:
   * `pitch` (orientation)
     * `beta` translated from the unit circle to coordinates more familiar to most people
 
-  * `radialVelocity`
+  * `radialVelocity` (lob)
     * component of *target*'s velocity directed towards the *sensor*
     * positive (+) means the *target* is moving towards the *sensor*
     * negative (-) means the *target* is moving away from the *sensor*
@@ -252,7 +269,7 @@ Here's a quick list of every property and it's meaning:
     * some vendors may fudge model information into `serial` if `serial`s are not unique across products
     * String
 
-  * `speed`
+  * `speed` (geolocation)
     * positive measure of speed
     * if I'm walking 1m/s perpendicular to a *sensor*'s line-of-sight, this number is 1m/s
     * in meters per second (m/s)
@@ -278,6 +295,10 @@ Here's a quick list of every property and it's meaning:
     * IDEALLY the same as *altitudeAngle*, if the *sensor* is equipped with an accelerometer
     * in degrees
     * `null` on error or unavailable
+
+  * *WGS*
+    * "World Geodetic System"
+    * refers to common "GPS Coordinates" of lat, lon, hae.
 
   * `yaw` (orientation)
     * `gamma` translated from the unit circle to coordinates more familiar to most people
