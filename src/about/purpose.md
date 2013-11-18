@@ -2,25 +2,25 @@ MILSON is a specification (Military Simulation Objects Notation) managed by the 
 
 [Augmented Reality](http://en.wikipedia.org/wiki/Augmented_reality) (AR) is here.
 
-As more technology and sensor devices formally only available to the military
-become affordable and available to civilians (ex-mil, professionals, and hobbyists) participating in 
+As more technology and sensor devices conventionally available to only the military become affordable and available to civilians (ex-mil, professionals, and hobbyists) participating in 
 [MilSim](http://en.wikipedia.org/wiki/MilSim),
 such as
 [airsoft](http://en.wikipedia.org/wiki/Airsoft)
 and
-[paintball](http://en.wikipedia.org/wiki/Paintball) turnaments,
+[paintball](http://en.wikipedia.org/wiki/Paintball) tournaments,
 the need for a well defined standard to communicate between such systems has become increasingly apparent.
 
-Unlike other working groups in the field MILSON is
+Unlike other working groups in the field, MILSON is
 
   * Open and transparent (not classified or proprietary)
   * Developer-oriented (because we understand software and hardware)
+  * Free to use (no licensing required)
 
 ### Goals
 
-  * Cater to the speed of development in the commercial sector.
+  * Cater to the speed of development of the commercial sector
 
-  * Provide easy integration between sensors and devices such as
+  * Provide easy integration of sensors and devices such as
 
     * [Motion Sensors](http://clipaday.com/videos/motion-sensor-paintball-gun)
     * [IR Cameras](http://dopepaintball.com/auction.php?QueryKeywords=ir%20camera)
@@ -28,7 +28,7 @@ Unlike other working groups in the field MILSON is
     * [Homebrew Radar](http://www.youtube.com/watch?v=MViVyocQhVw)
     * [AR Drones](http://ardrone.parrot.com/)
 
-    to modern controllers such as
+    with modern controllers such as
 
     * iPad, iPhone, iPod
     * Android tables, phones, and smart devices
@@ -36,24 +36,28 @@ Unlike other working groups in the field MILSON is
     * Dev boards - Arduino, Raspberry Pi, Pandaboard
     * Game consoles (they're cheap, easy to hack, and powerful) - Wii, PlayStation, XBox
 
-###Principles
+### Principles
 
   * Docs should be easy to understand
   * Docs and community should be easy to access
   * Specs should be easy to parse and easy to implement
-  * Specs should rely on object notations (JSON), rather than document markups (\*ML) that are designed only to work with Java
+    * especially in both statically typed languages (Java, C, Go) and dynamically typed languages (Python, Javascript)
+  * Specs should rely on object notations (JSON), rather than less-flexible document markups (\*ML)
   * Specs should lean on and draw from available open standards (and use them where it makes sense)
   * Data should be bandwidth friendly
   * MILSON should be adequate for use in actual military systems
 
-###Specifications
+### Specifications
+
+Aspects of MilSON-compliant systems defined by MilSON include:
 
   * Unattended Sensors
     * Cameras
     * Radars
     * IR
     * Sonar
-    * etc
+    * Tripwire systems
+    * others
   * Object Notation
   * Unattended Sensor Observations
     * 3-d space
@@ -66,7 +70,7 @@ Unlike other working groups in the field MILSON is
     * compression (zlib / gzip)
     * content-type (json, jpeg, png, raw binary, etc)
 
-###Existing Standards
+### Existing Standards
 
   * [Semantic Versioning](http://semver.org)
   * [W3C Geolocation Working Group](http://www.w3.org/2008/geolocation/)
