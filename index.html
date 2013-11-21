@@ -2,30 +2,31 @@
 
 <p><a href="http://en.wikipedia.org/wiki/Augmented_reality">Augmented Reality</a> (AR) is here.</p>
 
-<p>As more technology and sensor devices formally only available to the military
-become affordable and available to civilians (ex-mil, professionals, and hobbyists) participating in 
+<p>As more technology and sensor devices conventionally available to only the military become affordable and available to civilians (ex-mil, professionals, and hobbyists) participating in 
 <a href="http://en.wikipedia.org/wiki/MilSim">MilSim</a>,
 such as
 <a href="http://en.wikipedia.org/wiki/Airsoft">airsoft</a>
 and
-<a href="http://en.wikipedia.org/wiki/Paintball">paintball</a> turnaments,
+<a href="http://en.wikipedia.org/wiki/Paintball">paintball</a> tournaments,
 the need for a well defined standard to communicate between such systems has become increasingly apparent.</p>
 
-<p>Unlike other working groups in the field MILSON is</p>
+<p>Unlike other working groups in the field, MILSON is</p>
 
-<ul><li>Open and transparent (not classified or proprietary)</li><li>Developer-oriented (because we understand software and hardware)</li></ul>
+<ul><li>Open and transparent (not classified or proprietary)</li><li>Developer-oriented (because we understand software and hardware)</li><li>Free to use (no licensing required)</li></ul>
 
 <h3>Goals</h3>
 
-<ul><li><p>Cater to the speed of development in the commercial sector.</p></li><li><p>Provide easy integration between sensors and devices such as</p><ul><li><a href="http://clipaday.com/videos/motion-sensor-paintball-gun">Motion Sensors</a></li><li><a href="http://dopepaintball.com/auction.php?QueryKeywords=ir%20camera">IR Cameras</a></li><li>Airsoft and Paintball <a href="http://www.youtube.com/watch?v=6QcfZGDvHU8">Turrets</a> and <a href="http://www.paintballsentry.com/">Sentry</a></li><li><a href="http://www.youtube.com/watch?v=MViVyocQhVw">Homebrew Radar</a></li><li><a href="http://ardrone.parrot.com/">AR Drones</a></li></ul><p>to modern controllers such as</p><ul><li>iPad, iPhone, iPod</li><li>Android tables, phones, and smart devices</li><li>Android TVs</li><li>Dev boards - Arduino, Raspberry Pi, Pandaboard</li><li>Game consoles (they're cheap, easy to hack, and powerful) - Wii, PlayStation, XBox</li></ul></li></ul>
+<ul><li><p>Cater to the speed of development of the commercial sector</p></li><li><p>Provide easy integration of sensors and devices such as</p><ul><li><a href="http://clipaday.com/videos/motion-sensor-paintball-gun">Motion Sensors</a></li><li><a href="http://dopepaintball.com/auction.php?QueryKeywords=ir%20camera">IR Cameras</a></li><li>Airsoft and Paintball <a href="http://www.youtube.com/watch?v=6QcfZGDvHU8">Turrets</a> and <a href="http://www.paintballsentry.com/">Sentry</a></li><li><a href="http://www.youtube.com/watch?v=MViVyocQhVw">Homebrew Radar</a></li><li><a href="http://ardrone.parrot.com/">AR Drones</a></li></ul><p>with modern controllers such as</p><ul><li>iPad, iPhone, iPod</li><li>Android tables, phones, and smart devices</li><li>Android TVs</li><li>Dev boards - Arduino, Raspberry Pi, Pandaboard</li><li>Game consoles (they're cheap, easy to hack, and powerful) - Wii, PlayStation, XBox</li></ul></li></ul>
 
 <h3>Principles</h3>
 
-<ul><li>Docs should be easy to understand</li><li>Docs and community should be easy to access</li><li>Specs should be easy to parse and easy to implement</li><li>Specs should rely on object notations (JSON), rather than document markups (*ML) that are designed only to work with Java</li><li>Specs should lean on and draw from available open standards (and use them where it makes sense)</li><li>Data should be bandwidth friendly</li><li>MILSON should be adequate for use in actual military systems</li></ul>
+<ul><li>Docs should be easy to understand</li><li>Docs and community should be easy to access</li><li>Specs should be easy to parse and easy to implement<ul><li>especially in both statically typed languages (Java, C, Go) and dynamically typed languages (Python, Javascript)</li></ul></li><li>Specs should rely on object notations (JSON), rather than less-flexible document markups (*ML)</li><li>Specs should lean on and draw from available open standards (and use them where it makes sense)</li><li>Data should be bandwidth friendly</li><li>MILSON should be adequate for use in actual military systems</li></ul>
 
 <h3>Specifications</h3>
 
-<ul><li>Unattended Sensors<ul><li>Cameras</li><li>Radars</li><li>IR</li><li>Sonar</li><li>etc</li></ul></li><li>Object Notation</li><li>Unattended Sensor Observations<ul><li>3-d space</li></ul></li><li>Unattended Sensor Capabilities<ul><li>Movement</li><li>Media Streams</li></ul></li><li>Network Transport<ul><li>connection</li><li>resources</li><li>compression (zlib / gzip)</li><li>content-type (json, jpeg, png, raw binary, etc)</li></ul></li></ul>
+<p>Aspects of MilSON-compliant systems defined by MilSON include:</p>
+
+<ul><li>Unattended Sensors<ul><li>Cameras</li><li>Radars</li><li>IR</li><li>Sonar</li><li>Tripwire systems</li><li>others</li></ul></li><li>Object Notation</li><li>Unattended Sensor Observations<ul><li>3-d space</li></ul></li><li>Unattended Sensor Capabilities<ul><li>Movement</li><li>Media Streams</li></ul></li><li>Network Transport<ul><li>connection</li><li>resources</li><li>compression (zlib / gzip)</li><li>content-type (json, jpeg, png, raw binary, etc)</li></ul></li></ul>
 
 <h3>Existing Standards</h3>
 
